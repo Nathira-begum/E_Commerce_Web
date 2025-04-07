@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Login() {
   return (
-    <div className="flex h-screen font-sans">
+    <div className="flex h-screen w-screen font-sans">
       {/* Left Section */}
       <div className="w-1/2 flex items-center justify-center bg-white p-10">
         <div className="w-full max-w-sm">
@@ -22,32 +22,32 @@ export default function Login() {
             <p className="text-sm text-center">Forget Password ?</p>
             <button
               type="submit"
-              className="w-full bg-[#3d5cb8] text-white py-2 rounded-full font-semibold"
+              className="w-full bg-blue-700 text-white py-2 rounded-full font-semibold"
             >
               Login
             </button>
             <div className="text-center text-sm">Or</div>
             <div className="flex justify-between gap-2">
-              <button className="border rounded-full px-3 py-1 flex items-center w-full justify-center">
+              <button className="border rounded-full px-3 py-1 flex items-center w-1/2 justify-center">
                 <img
                   src="https://img.icons8.com/color/16/000000/google-logo.png"
                   alt="Google"
-                  className="mr-2"
+                  className="mr-1"
                 />
                 Google
               </button>
-              <button className="border rounded-full px-3 py-1 flex items-center w-full justify-center">
+              <button className="border rounded-full px-3 py-1 flex items-center w-1/2 justify-center">
                 <img
                   src="https://img.icons8.com/fluency/16/facebook-new.png"
                   alt="Facebook"
-                  className="mr-2"
+                  className="mr-1"
                 />
                 Facebook
               </button>
             </div>
             <p className="text-center text-sm">
-              Already have an account ? {" "}
-              <Link to="/signup" className="text-[#3d5cb8]">
+              Already have an account ?{" "}
+              <Link to="/signin" className="text-blue-600">
                 Signin
               </Link>
             </p>
@@ -56,8 +56,11 @@ export default function Login() {
       </div>
 
       {/* Right Section */}
-      <div className="w-1/2 bg-[#3d5cb8] text-white flex justify-center items-center relative overflow-hidden">
-        <div className="absolute left-[-50px] top-0 bottom-0 w-[100px] bg-white rotate-[45deg] z-10"></div>
+      <div className="w-1/2 bg-blue-700 text-white flex flex-col justify-center items-center relative overflow-hidden">
+        {/* Decorative white rotated strip */}
+        {/* <div className="absolute w-48 h-48 bg-white rotate-45 top-[30%] left-[-3rem] z-10"></div> */}
+
+        {/* Content on top of blue */}
         <div className="z-20 text-center">
           <h1 className="text-4xl font-bold">
             WELCOME
