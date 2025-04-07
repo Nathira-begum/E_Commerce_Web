@@ -9,16 +9,31 @@ export default function Login() {
         <div className="w-full max-w-sm">
           <h2 className="text-center text-sm font-semibold mb-4">Login</h2>
           <form className="space-y-4">
-            <input
-              type="text"
-              placeholder="enter username/email"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none"
-            />
-            <input
-              type="password"
-              placeholder="enter password"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none"
-            />
+            <div className="relative">
+              <img
+                src="https://img.icons8.com/ios-filled/20/000000/user.png"
+                alt="user icon"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                placeholder="Enter username/email"
+                className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none"
+              />
+            </div>
+            <div className="relative">
+              <img
+                src="https://img.icons8.com/ios-glyphs/20/000000/lock--v1.png"
+                alt="password icon"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="password"
+                placeholder="Enter password"
+                className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none"
+              />
+            </div>
+
             <p className="text-sm text-center">Forget Password ?</p>
             <button
               type="submit"
