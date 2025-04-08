@@ -11,24 +11,37 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
+    // Basic email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(username)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    // Password length check
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: username, password }), // ✅ FIXED HERE
+        body: JSON.stringify({ email: username, password }),
         credentials: "include",
       });
 
       const data = await res.json();
       if (res.ok) {
         sessionStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/home");
+        navigate("/");
       } else {
         setError(data.message || "Login failed");
       }
     } catch (err) {
-      console.error("Login error:", err); // ✅ Now shows in console
-      setError("Something went wrong");
+      console.error("Login error:", err);
+      setError("Something went wrong. Please try again later.");
     }
   };
 

@@ -20,6 +20,25 @@ export default function Signup() {
     e.preventDefault();
     setError("");
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
+
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      return setError("Please enter a valid email address");
+    }
+
+    if (!formData.name.trim()) {
+      return setError("Name is required");
+    }
+
+    if (!formData.phone || !phoneRegex.test(formData.phone)) {
+      return setError("Please enter a valid 10-digit phone number");
+    }
+
+    if (!formData.password || formData.password.length < 6) {
+      return setError("Password must be at least 6 characters");
+    }
+
     if (formData.password !== formData.confirmPassword) {
       return setError("Passwords do not match");
     }
@@ -181,7 +200,7 @@ export default function Signup() {
             </div>
             <p className="text-center text-sm">
               Already have an account?{" "}
-              <Link to="/" className="text-blue-600">
+              <Link to="/login" className="text-blue-600">
                 Login
               </Link>
             </p>
