@@ -15,18 +15,19 @@ export default function Login() {
       const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: username, password }), // ✅ FIXED HERE
         credentials: "include",
       });
 
       const data = await res.json();
       if (res.ok) {
         sessionStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/home"); 
+        navigate("/home");
       } else {
-        setError(data.message);
+        setError(data.message || "Login failed");
       }
     } catch (err) {
+      console.error("Login error:", err); // ✅ Now shows in console
       setError("Something went wrong");
     }
   };
@@ -46,7 +47,11 @@ export default function Login() {
           <h2 className="text-center text-sm font-semibold mb-4">Login</h2>
           <form className="space-y-4" onSubmit={handleLogin}>
             <div className="relative">
-              <img src="https://img.icons8.com/ios-filled/20/000000/user.png" alt="user icon" className="absolute left-3 top-1/2 transform -translate-y-1/2" />
+              <img
+                src="https://img.icons8.com/ios-filled/20/000000/user.png"
+                alt="user icon"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2"
+              />
               <input
                 type="text"
                 placeholder="Enter username/email"
@@ -57,7 +62,11 @@ export default function Login() {
               />
             </div>
             <div className="relative">
-              <img src="https://img.icons8.com/ios-glyphs/20/000000/lock--v1.png" alt="password icon" className="absolute left-3 top-1/2 transform -translate-y-1/2" />
+              <img
+                src="https://img.icons8.com/ios-glyphs/20/000000/lock--v1.png"
+                alt="password icon"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2"
+              />
               <input
                 type="password"
                 placeholder="Enter password"
@@ -67,25 +76,46 @@ export default function Login() {
                 required
               />
             </div>
-            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
             <p className="text-sm text-center">Forget Password ?</p>
-            <button type="submit" className="w-full bg-blue-700 text-white py-2 rounded-full font-semibold">
+            <button
+              type="submit"
+              className="w-full bg-blue-700 text-white py-2 rounded-full font-semibold"
+            >
               Login
             </button>
             <div className="text-center text-sm">Or</div>
             <div className="flex justify-between gap-2">
-              <button onClick={handleGoogleLogin} type="button" className="border rounded-full px-3 py-1 flex items-center w-1/2 justify-center">
-                <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google" className="mr-1" />
+              <button
+                onClick={handleGoogleLogin}
+                type="button"
+                className="border rounded-full px-3 py-1 flex items-center w-1/2 justify-center"
+              >
+                <img
+                  src="https://img.icons8.com/color/16/000000/google-logo.png"
+                  alt="Google"
+                  className="mr-1"
+                />
                 Google
               </button>
-              <button onClick={handleFacebookLogin} type="button" className="border rounded-full px-3 py-1 flex items-center w-1/2 justify-center">
-                <img src="https://img.icons8.com/fluency/16/facebook-new.png" alt="Facebook" className="mr-1" />
+              <button
+                onClick={handleFacebookLogin}
+                type="button"
+                className="border rounded-full px-3 py-1 flex items-center w-1/2 justify-center"
+              >
+                <img
+                  src="https://img.icons8.com/fluency/16/facebook-new.png"
+                  alt="Facebook"
+                  className="mr-1"
+                />
                 Facebook
               </button>
             </div>
             <p className="text-center text-sm">
               Don’t have an account?{" "}
-              <Link to="/signin" className="text-blue-600">
+              <Link to="/signup" className="text-blue-600">
                 Sign Up
               </Link>
             </p>
