@@ -5,20 +5,19 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Basic email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username)) {
       setError("Please enter a valid email address");
       return;
     }
 
-    // Password length check
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
@@ -53,11 +52,15 @@ export default function Login() {
     window.open("http://localhost:5000/api/auth/facebook", "_self");
   };
 
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible((prevState) => !prevState);
+  };
+
   return (
     <div className="flex h-screen w-screen font-sans">
       <div className="w-1/2 flex items-center justify-center bg-white p-10">
         <div className="w-full max-w-sm">
-          <h2 className="text-center text-sm font-semibold mb-4">Login</h2>
+          <h2 className="text-center text-2xl font-bold">Login</h2>
           <form className="space-y-4" onSubmit={handleLogin}>
             <div className="relative">
               <img
@@ -81,18 +84,36 @@ export default function Login() {
                 className="absolute left-3 top-1/2 transform -translate-y-1/2"
               />
               <input
-                type="password"
+                type={isPasswordVisible ? "text" : "password"}
                 placeholder="Enter password"
-                className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none"
+                className="w-full pl-10 pr-10 py-2 border rounded-md focus:outline-none"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+              >
+                <img
+                  src={
+                    isPasswordVisible
+                      ? "https://img.icons8.com/ios-glyphs/20/000000/visible.png"
+                      : "https://img.icons8.com/ios-glyphs/20/000000/invisible.png"
+                  }
+                  alt={isPasswordVisible ? "Hide password" : "Show password"}
+                />
+              </button>
             </div>
             {error && (
               <p className="text-red-500 text-sm text-center">{error}</p>
             )}
-            <p className="text-sm text-center">Forget Password ?</p>
+            <p className="text-sm text-center">
+              <Link to="/forgot-password" className="text-blue-600 hover:underline">
+                Forgot Password?
+              </Link>
+            </p>
             <button
               type="submit"
               className="w-full bg-blue-700 text-white py-2 rounded-full font-semibold"
@@ -128,7 +149,7 @@ export default function Login() {
             </div>
             <p className="text-center text-sm">
               Don’t have an account?{" "}
-              <Link to="/signup" className="text-blue-600">
+              <Link to="/signup" className="text-blue-600 hover:underline">
                 Sign Up
               </Link>
             </p>

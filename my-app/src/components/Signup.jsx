@@ -9,11 +9,23 @@ export default function Signup() {
     password: "",
     confirmPassword: "",
   });
+
   const [error, setError] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible((prev) => !prev);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible((prev) => !prev);
   };
 
   const handleSubmit = async (e) => {
@@ -78,8 +90,10 @@ export default function Signup() {
 
       <div className="w-1/2 flex items-center justify-center bg-white px-6">
         <div className="w-full max-w-sm space-y-4">
-          <h2 className="text-center font-semibold text-md">Sign Up</h2>
+        <h2 className="text-center text-2xl font-bold">Sign Up</h2>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           <form className="space-y-3" onSubmit={handleSubmit}>
+            {/* Email */}
             <div className="flex items-center border rounded px-3 py-2">
               <img
                 src="https://img.icons8.com/ios-filled/20/000000/new-post.png"
@@ -95,6 +109,8 @@ export default function Signup() {
                 required
               />
             </div>
+
+            {/* Name */}
             <div className="flex items-center border rounded px-3 py-2">
               <img
                 src="https://img.icons8.com/ios-filled/20/000000/user.png"
@@ -110,6 +126,8 @@ export default function Signup() {
                 required
               />
             </div>
+
+            {/* Phone */}
             <div className="flex items-center border rounded px-3 py-2">
               <img
                 src="https://img.icons8.com/ios-filled/20/000000/phone.png"
@@ -125,82 +143,81 @@ export default function Signup() {
                 required
               />
             </div>
-            <div className="flex items-center border rounded px-3 py-2">
+
+            {/* Password */}
+            <div className="flex items-center border rounded px-3 py-2 relative">
               <img
                 src="https://img.icons8.com/ios-filled/20/000000/lock.png"
                 alt="password"
                 className="mr-2"
               />
               <input
-                type="password"
+                type={passwordVisible ? "text" : "password"}
                 name="password"
                 placeholder="Enter Password"
                 className="w-full outline-none"
                 onChange={handleChange}
                 required
               />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3"
+              >
+                <img
+                  src={
+                    passwordVisible
+                      ? "https://img.icons8.com/ios-filled/20/000000/visible.png"
+                      : "https://img.icons8.com/ios-filled/20/000000/invisible.png"
+                  }
+                  alt={passwordVisible ? "Hide password" : "Show password"}
+                />
+              </button>
             </div>
-            <div className="flex items-center border rounded px-3 py-2">
+
+            {/* Confirm Password */}
+            <div className="flex items-center border rounded px-3 py-2 relative">
               <img
                 src="https://img.icons8.com/ios-filled/20/000000/lock--v1.png"
                 alt="confirm password"
                 className="mr-2"
               />
               <input
-                type="password"
+                type={confirmPasswordVisible ? "text" : "password"}
                 name="confirmPassword"
                 placeholder="Confirm Password"
                 className="w-full outline-none"
                 onChange={handleChange}
                 required
               />
+              <button
+                type="button"
+                onClick={toggleConfirmPasswordVisibility}
+                className="absolute right-3"
+              >
+                <img
+                  src={
+                    confirmPasswordVisible
+                      ? "https://img.icons8.com/ios-filled/20/000000/visible.png"
+                      : "https://img.icons8.com/ios-filled/20/000000/invisible.png"
+                  }
+                  alt={
+                    confirmPasswordVisible ? "Hide password" : "Show password"
+                  }
+                />
+              </button>
             </div>
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
+
             <button
               type="submit"
-              className="w-full bg-blue-700 text-white py-2 rounded-full font-semibold"
+              className="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800 transition"
             >
               Sign Up
             </button>
-            <div className="text-center text-sm">Or</div>
-            <div className="flex justify-between gap-2">
-              <button
-                onClick={() =>
-                  window.open("http://localhost:5000/api/auth/google", "_self")
-                }
-                type="button"
-                className="border rounded-full px-3 py-1 flex items-center w-1/2 justify-center"
-              >
-                <img
-                  src="https://img.icons8.com/color/16/000000/google-logo.png"
-                  alt="Google"
-                  className="mr-1"
-                />
-                Google
-              </button>
-              <button
-                onClick={() =>
-                  window.open(
-                    "http://localhost:5000/api/auth/facebook",
-                    "_self"
-                  )
-                }
-                type="button"
-                className="border rounded-full px-3 py-1 flex items-center w-1/2 justify-center"
-              >
-                <img
-                  src="https://img.icons8.com/fluency/16/facebook-new.png"
-                  alt="Facebook"
-                  className="mr-1"
-                />
-                Facebook
-              </button>
-            </div>
-            <p className="text-center text-sm">
+
+            <p className="text-sm text-center">
               Already have an account?{" "}
-              <Link to="/login" className="text-blue-600">
+              <Link to="/login" className="text-blue-600 hover:underline">
                 Login
               </Link>
             </p>
