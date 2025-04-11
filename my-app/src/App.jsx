@@ -5,6 +5,8 @@ import Signup from "./components/Signup";
 import ForgotPassword from "./components/ForgotPassword";
 import Home from "./components/Home";
 import Shop from "./components/Shop";
+import Wishlist from "./components/Wishlist";
+import Category from "./components/Category";
 
 function App() {
   return (
@@ -15,6 +17,9 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />{" "}
         <Route path="/shop" element={<Shop />} />
+        <Route path="/wishlist" element={<Wishlist />} /> 
+        <Route path="/category" element={<Category />} /> 
+
       </Routes>
     </Router>
   );

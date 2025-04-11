@@ -1,13 +1,21 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { IoShareSocial } from "react-icons/io5";
+import { GrFavorite } from "react-icons/gr";
+import { BiCategory } from "react-icons/bi";
 
 const HomePage = () => {
   const navigate = useNavigate();
+
   return (
     <div className="w-full">
       {/* Navbar */}
       {/* Navbar */}
       <nav className="w-full flex justify-between items-center px-10 py-6 shadow-md sticky top-0 bg-white z-50 font-semibold text-black">
+        <h2 className="absolute left-1/2 transform -translate-x-1/2 text-4xl font-extrabold font-stylish text-center">
+          TRE<span className="text-blue-600">N</span>DIFY
+        </h2>
+
         {/* Left - Navigation */}
         <div className="flex items-center gap-10 text-lg">
           <a href="#" className="hover:text-blue-600 transition">
@@ -19,30 +27,50 @@ const HomePage = () => {
           <a href="#" className="hover:text-blue-600 transition">
             Kids
           </a>
-          <i className="fas fa-search text-3xl cursor-pointer hover:text-blue-600 transition"></i>
+
+          <div className="flex items-center border border-gray-300 rounded-md px-2 py-1 w-full max-w-xs bg-white shadow-sm">
+            <i className="fas fa-search text-gray-500 text-lg mr-2"></i>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-full outline-none text-sm bg-transparent"
+            />
+          </div>
         </div>
 
-        <img
-          src="/icon/Trendify.jpeg"
-          alt="Center Icon"
-          className="w-50 h-50 object-contain"
-        />
-
         {/* Right - Icons */}
-        <div className="flex gap-6 text-3xl">
-          <i className="fas fa-heart hover:text-blue-500 cursor-pointer"></i>
+        <div className="flex gap-9 text-3xl">
+          <Link to="/category">
+            <BiCategory className="fas fa-heart hover:text-blue-500 cursor-pointer relative top-[-11px]" />
+          </Link>
+          <Link to="/wishlist">
+            <i className="fas fa-heart hover:text-blue-500 cursor-pointer relative top-[-7px]"></i>
+          </Link>
           <i className="fas fa-shopping-cart hover:text-blue-500 cursor-pointer"></i>
-          <i className="fas fa-user-circle hover:text-green-500 cursor-pointer"></i>
+          <Link to="/signup">
+            <i className="fas fa-user-circle hover:text-blue-500 cursor-pointer relative top-[-7px]"></i>
+          </Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full h-[100vh] flex items-center justify-end bg-blue-900 text-white px-10">
-        <img
-          src="/icon/Frame 9.jpeg"
-          alt="model"
-          className="absolute inset-0 w-full h-full object-cover object-left"
-        />
+      <section className="relative w-full min-h-screen flex items-center justify-between bg-blue-900 text-white px-8">
+        <div className="w-1/2">
+          <img
+            src="/icon/fashion.jpeg"
+            alt="model"
+            className="w-full h-auto shadow-lg"
+          />
+        </div>
+        <div className="w-1/2 pl-10">
+          {/* Your content like text, headline, buttons etc */}
+          <h1 className="text-4xl font-bold">
+            NEW <span className="text-blue-500 italic">Trendy</span> COLLECTION
+          </h1>
+          <p className="mt-4 text-xl">
+            Available <span className="text-blue-500 font-semibold">NOW</span>
+          </p>
+        </div>
       </section>
 
       <section className="px-4 py-6 bg-pink-50">
@@ -107,16 +135,12 @@ const HomePage = () => {
               </div>
 
               {/* Heart and Eye Buttons */}
-              <div className="absolute top-2 right-2 space-y-2">
+              <div className="absolute top-2 right-2 flex flex-col space-y-2">
                 <button className="bg-white p-1 rounded-full shadow">
-                  <span role="img" aria-label="heart">
-                    🤍
-                  </span>
+                  <GrFavorite className="w-5 h-5 text-gray-500" />
                 </button>
                 <button className="bg-white p-1 rounded-full shadow">
-                  <span role="img" aria-label="eye">
-                    👁️
-                  </span>
+                  <IoShareSocial className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
 
