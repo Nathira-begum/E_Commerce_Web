@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoShareSocial } from "react-icons/io5";
 import { GrFavorite } from "react-icons/gr";
 import { BiCategory } from "react-icons/bi";
 
+
 const HomePage = () => {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
   const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
+  const handleAddToCart = (product) => {
+    setCartItems((prevItems) => [product, ...prevItems]);
+  };
+
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  const categoryImages = {
+    men: ["/icon/men1.jpeg", "/icon/men2.jpeg", "/icon/men3.jpeg"],
+    women: ["/icon/women1.jpeg", "/icon/women2.jpeg", "/icon/women3.jpeg"],
+    kids: ["/icon/kid1.jpeg", "/icon/kid2.jpeg", "/icon/kid3.jpeg"],
+    formals: ["/icon/formal1.jpeg", "/icon/formal2.jpeg", "/icon/formal3.jpeg"],
+  };
+
+  const handleCategoryClick = (category) => {
+    setActiveCategory((prev) => (prev === category ? null : category));
+  };
 
   return (
     <div className="w-full">
@@ -46,7 +66,14 @@ const HomePage = () => {
           <Link to="/wishlist">
             <i className="fas fa-heart hover:text-blue-500 cursor-pointer relative top-[-7px]"></i>
           </Link>
-          <i className="fas fa-shopping-cart hover:text-blue-500 cursor-pointer"></i>
+          <div className="relative cursor-pointer">
+            <i className="fas fa-shopping-cart hover:text-blue-500 text-2xl relative top-[-8px]"></i>
+            {cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-3 bg-blue-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                {cartItems.length}
+              </span>
+            )}
+          </div>
           <Link to="/signup">
             <i className="fas fa-user-circle hover:text-blue-500 cursor-pointer relative top-[-7px]"></i>
           </Link>
@@ -174,8 +201,10 @@ const HomePage = () => {
 
               <div className="group mt-2">
                 {" "}
-                {/* Add margin-top here for gap */}
-                <button className="ml-4 text-blue-500 group-hover:text-black font-semibold border-2 border-blue-500 group-hover:border-black px-3 py-1 rounded">
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="bg-blue-500 hover:bg-white text-black px-4 py-2 rounded transition duration-300"
+                >
                   Add to cart
                 </button>
               </div>
@@ -185,11 +214,69 @@ const HomePage = () => {
       </section>
 
       {/* Category Navigation */}
-      <section className="bg-blue-600 text-white text-center py-8">
-        <h3 className="text-xl font-bold">
-          MEN | WOMEN | KIDS | FORMALS | CASUALS
-        </h3>
-      </section>
+      <section className="relative bg-blue-900 text-white py-20">
+  <div className="flex items-center justify-center gap-16 relative">
+    
+    {/* Left Preview Image (Always Rendered) */}
+    <div className="flex flex-col gap-4 w-48 h-[288px]">
+      <img
+        src={categoryImages[activeCategory]?.[0]}
+        alt="left-img"
+        className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
+          ${
+            activeCategory
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-10 pointer-events-none"
+          }`}
+      />
+    </div>
+
+    {/* Category List */}
+    <div className="flex flex-col gap-6 text-4xl font-bold text-center">
+      {["men", "women", "kids", "formals"].map((cat) => (
+        <div
+          key={cat}
+          className="relative group cursor-pointer"
+          onMouseEnter={() => setActiveCategory(cat)}
+          onMouseLeave={() => setActiveCategory(null)}
+        >
+          <span
+            className={`transition-all duration-300 transform ${
+              activeCategory === cat ? "text-blue-300 scale-110" : ""
+            }`}
+          >
+            {cat.toUpperCase()}
+          </span>
+        </div>
+      ))}
+    </div>
+
+    {/* Right Preview Images (Always Rendered) */}
+    <div className="flex flex-col gap-4 w-48 h-[600px]">
+      <img
+        src={categoryImages[activeCategory]?.[1]}
+        alt="right-img-1"
+        className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
+          ${
+            activeCategory
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 translate-x-10 pointer-events-none"
+          }`}
+      />
+      <img
+        src={categoryImages[activeCategory]?.[2]}
+        alt="right-img-2"
+        className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
+          ${
+            activeCategory
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 translate-x-10 pointer-events-none"
+          }`}
+      />
+    </div>
+  </div>
+</section>
+
 
       {/* Featured Collections */}
       <section className="bg-white py-16 px-10">
