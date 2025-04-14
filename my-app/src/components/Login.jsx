@@ -33,7 +33,7 @@ export default function Login() {
 
       const data = await res.json();
       if (res.ok) {
-        sessionStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(data.user)); // ✅ Store the full object with _id, name, lname, etc.
         navigate("/");
       } else {
         setError(data.message || "Login failed");
@@ -110,7 +110,10 @@ export default function Login() {
               <p className="text-red-500 text-sm text-center">{error}</p>
             )}
             <p className="text-sm text-center">
-              <Link to="/forgot-password" className="text-blue-600 hover:underline">
+              <Link
+                to="/forgot-password"
+                className="text-blue-600 hover:underline"
+              >
                 Forgot Password?
               </Link>
             </p>

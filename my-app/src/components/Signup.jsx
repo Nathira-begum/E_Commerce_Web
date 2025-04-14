@@ -58,12 +58,16 @@ export default function Signup() {
     try {
       const res = await fetch("http://localhost:5000/api/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
       });
 
       const data = await res.json();
-      if (res.ok) {
+
+      if (res.ok && data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/");
       } else {
         setError(data.message || "Signup failed");
@@ -90,7 +94,7 @@ export default function Signup() {
 
       <div className="w-1/2 flex items-center justify-center bg-white px-6">
         <div className="w-full max-w-sm space-y-4">
-        <h2 className="text-center text-2xl font-bold">Sign Up</h2>
+          <h2 className="text-center text-2xl font-bold">Sign Up</h2>
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           <form className="space-y-3" onSubmit={handleSubmit}>
             {/* Email */}
@@ -137,7 +141,7 @@ export default function Signup() {
               <input
                 type="tel"
                 name="phone"
-                placeholder="Enter Mobile Number"
+                placeholder="Enter Phone Number"
                 className="w-full outline-none"
                 onChange={handleChange}
                 required

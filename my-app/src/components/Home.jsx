@@ -4,7 +4,6 @@ import { IoShareSocial } from "react-icons/io5";
 import { GrFavorite } from "react-icons/gr";
 import { BiCategory } from "react-icons/bi";
 
-
 const HomePage = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
@@ -74,7 +73,7 @@ const HomePage = () => {
               </span>
             )}
           </div>
-          <Link to="/signup">
+          <Link to="/myaccount">
             <i className="fas fa-user-circle hover:text-blue-500 cursor-pointer relative top-[-7px]"></i>
           </Link>
         </div>
@@ -215,68 +214,66 @@ const HomePage = () => {
 
       {/* Category Navigation */}
       <section className="relative bg-blue-900 text-white py-20">
-  <div className="flex items-center justify-center gap-16 relative">
-    
-    {/* Left Preview Image (Always Rendered) */}
-    <div className="flex flex-col gap-4 w-48 h-[288px]">
-      <img
-        src={categoryImages[activeCategory]?.[0]}
-        alt="left-img"
-        className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
+        <div className="flex items-center justify-center gap-16 relative">
+          {/* Left Preview Image (Always Rendered) */}
+          <div className="flex flex-col gap-4 w-48 h-[288px]">
+            <img
+              src={categoryImages[activeCategory]?.[0]}
+              alt="left-img"
+              className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
           ${
             activeCategory
               ? "opacity-100 translate-x-0"
               : "opacity-0 -translate-x-10 pointer-events-none"
           }`}
-      />
-    </div>
+            />
+          </div>
 
-    {/* Category List */}
-    <div className="flex flex-col gap-6 text-4xl font-bold text-center">
-      {["men", "women", "kids", "formals"].map((cat) => (
-        <div
-          key={cat}
-          className="relative group cursor-pointer"
-          onMouseEnter={() => setActiveCategory(cat)}
-          onMouseLeave={() => setActiveCategory(null)}
-        >
-          <span
-            className={`transition-all duration-300 transform ${
-              activeCategory === cat ? "text-blue-300 scale-110" : ""
-            }`}
-          >
-            {cat.toUpperCase()}
-          </span>
+          {/* Category List */}
+          <div className="flex flex-col gap-6 text-4xl font-bold text-center">
+            {["men", "women", "kids", "formals"].map((cat) => (
+              <div
+                key={cat}
+                className="relative group cursor-pointer"
+                onMouseEnter={() => setActiveCategory(cat)}
+                onMouseLeave={() => setActiveCategory(null)}
+              >
+                <span
+                  className={`transition-all duration-300 transform ${
+                    activeCategory === cat ? "text-blue-300 scale-110" : ""
+                  }`}
+                >
+                  {cat.toUpperCase()}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Right Preview Images (Always Rendered) */}
+          <div className="flex flex-col gap-4 w-48 h-[600px]">
+            <img
+              src={categoryImages[activeCategory]?.[1]}
+              alt="right-img-1"
+              className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
+          ${
+            activeCategory
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 translate-x-10 pointer-events-none"
+          }`}
+            />
+            <img
+              src={categoryImages[activeCategory]?.[2]}
+              alt="right-img-2"
+              className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
+          ${
+            activeCategory
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 translate-x-10 pointer-events-none"
+          }`}
+            />
+          </div>
         </div>
-      ))}
-    </div>
-
-    {/* Right Preview Images (Always Rendered) */}
-    <div className="flex flex-col gap-4 w-48 h-[600px]">
-      <img
-        src={categoryImages[activeCategory]?.[1]}
-        alt="right-img-1"
-        className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
-          ${
-            activeCategory
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 translate-x-10 pointer-events-none"
-          }`}
-      />
-      <img
-        src={categoryImages[activeCategory]?.[2]}
-        alt="right-img-2"
-        className={`w-48 h-72 object-cover rounded-xl shadow-lg transition-all duration-500 ease-in-out
-          ${
-            activeCategory
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 translate-x-10 pointer-events-none"
-          }`}
-      />
-    </div>
-  </div>
-</section>
-
+      </section>
 
       {/* Featured Collections */}
       <section className="bg-white py-16 px-10">
