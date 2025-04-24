@@ -39,7 +39,7 @@ const Navbar = () => {
       <div className="flex items-center gap-10">
         <FaShoppingCart size={20} className="cursor-pointer hover:text-gray-300" />
         <FaHeart size={20} className="cursor-pointer hover:text-gray-300" />
-        <Link to="/profile">
+        <Link to="/myprofile">
           <FaUser size={20} className="cursor-pointer hover:text-gray-300" />
         </Link>
       </div>
