@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import Navbar from "./HomeComponents/Navbar";
 import { BiCategory } from "react-icons/bi";
 import { FaHeart, FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import {
@@ -150,50 +151,7 @@ const MyProfile = () => {
   return (
     <div className="w-full min-h-screen bg-gray-50">
       {/* Navbar */}
-      <nav className="w-full flex justify-between items-center px-10 py-6 shadow-md sticky top-0 bg-white z-50 font-semibold text-black">
-        <h2 className="absolute left-1/2 transform -translate-x-1/2 text-4xl font-extrabold text-center">
-          TRE<span className="text-blue-600">N</span>DIFY
-        </h2>
-        <div className="flex items-center gap-10 text-lg">
-          <a href="#" className="hover:text-blue-600 transition">
-            Women
-          </a>
-          <a href="#" className="hover:text-blue-600 transition">
-            Men
-          </a>
-          <a href="#" className="hover:text-blue-600 transition">
-            Kids
-          </a>
-          <div className="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white shadow-sm max-w-xs w-full">
-            <i className="fas fa-search text-gray-500 text-lg mr-2"></i>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full outline-none text-sm bg-transparent"
-            />
-          </div>
-        </div>
-        <div className="flex gap-9 text-3xl">
-          <Link to="/category">
-            <BiCategory className="hover:text-blue-500 cursor-pointer" />
-          </Link>
-          <Link to="/wishlist">
-            <FaHeart className="hover:text-blue-500 cursor-pointer" />
-          </Link>
-          <div className="relative cursor-pointer">
-            <FaShoppingCart className="hover:text-blue-500 text-2xl" />
-            {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-3 bg-blue-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                {cartItems.length}
-              </span>
-            )}
-          </div>
-          <Link to="/signup">
-            <FaUserCircle className="hover:text-blue-500 cursor-pointer" />
-          </Link>
-        </div>
-      </nav>
-
+      <Navbar/>
       {/* Main Section */}
       <div className="flex px-10 py-8 gap-6">
         {/* Sidebar */}

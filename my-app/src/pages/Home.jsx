@@ -1,13 +1,13 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import HeroSection from '../components/HeroSection'
-import WebFlashSale from '../components/WebFlashSale'
-import TrendingCategories from '../components/TrendingCategories'
-import CategoryHoverShowcase from '../components/CategoryHoverShowcase'
-import NewArrivals from '../components/NewArrivals'
-import FeaturedCollections from '../components/FeaturedCollections'
-import SeasonalOffers from '../components/SeasonalOffers'
-import Footer from '../components/Footer'
+import Navbar from '../components/HomeComponents/Navbar'
+import HeroSection from '../components/HomeComponents/HeroSection'
+import WebFlashSale from '../components/HomeComponents/WebFlashSale'
+import TrendingCategories from '../components/HomeComponents/TrendingCategories'
+import CategoryHoverShowcase from '../components/HomeComponents/CategoryHoverShowcase'
+import NewArrivals from '../components/HomeComponents/NewArrivals'
+import FeaturedCollections from '../components/HomeComponents/FeaturedCollections'
+import SeasonalOffers from '../components/HomeComponents/SeasonalOffers'
+import Footer from '../components/HomeComponents/Footer'
 
 const Home = () => {
   return (

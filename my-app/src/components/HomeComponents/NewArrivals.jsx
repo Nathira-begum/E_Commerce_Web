@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import menImage from '../assets/gabriel-martin-Yy8wzGtjcGo-unsplash (1).jpg';
-import womenImage from '../assets/Women.png';
-import kidsImage from '../assets/nathan-dumlao-ts8LZD9KVMQ-unsplash.jpg';
-import accessoriesImage from '../assets/nab-visuals-xWgowSjY1p8-unsplash.jpg';
+import menImage from '../../assets/gabriel-martin-Yy8wzGtjcGo-unsplash (1).jpg';
+import womenImage from '../../assets/Women.png';
+import kidsImage from '../../assets/nathan-dumlao-ts8LZD9KVMQ-unsplash.jpg';
+import accessoriesImage from '../../assets/nab-visuals-xWgowSjY1p8-unsplash.jpg';
 
 const NewArrivals = () => {
     return (

@@ -12,9 +12,6 @@ import MyOrder from "./components/MyOrder";
 import MyPayment from "./components/MyPayment";
 import MyWallet from "./components/MyWallet";
 import MyProfile from "./components/MyProfile";
-import AdminLogin from "./pages/AdminLogin";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Admin from "./pages/Admin";
 import Vendor from "./pages/Vendor";
 
 function App() {
@@ -29,8 +26,6 @@ function App() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/category" element={<Category />} />
         <Route path="/myaccount" element={<MyAccount/>} />
-        <Route path="/admin-login" element={<AdminLogin/>} />
-        <Route path="/admin" element={<ProtectedRoute><Admin/></ProtectedRoute>}/>
         <Route path="/vendor" element={<Vendor/>} />
 
 

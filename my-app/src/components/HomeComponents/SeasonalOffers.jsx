@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import offerImage from '../assets/Rectangle 70.png';
+import offerImage from '../../assets/Rectangle 70.png';
 
 const SeasonalOffers = () => {
     const calculateTimeLeft = () => {
@@ -51,7 +51,7 @@ const SeasonalOffers = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="w-100 text-gray-800 p-8 md:p-12 rounded-2xl shadow-md "  className="relative text-white py-20 px-6 md:px-20 bg-cover bg-center rounded-3xl shadow-xl overflow-hidden"
+            className="w-100 text-gray-800 p-8 md:p-12 rounded-2xl shadow-md relative text-white py-20 px-6 md:px-20 bg-cover bg-center rounded-3xl shadow-xl overflow-hidden"
         style={{ backgroundImage: `url(${offerImage})` }}
           >
             <span className="bg-red-600 text-white text-xs px-3 py-1 rounded-full font-semibold">SUMMER SPECIAL</span>
