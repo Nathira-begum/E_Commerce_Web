@@ -112,14 +112,14 @@ export default function Login() {
             <p className="text-sm text-center">
               <Link
                 to="/forgot-password"
-                className="text-blue-600 hover:underline"
+                className="text-red-600 hover:underline"
               >
                 Forgot Password?
               </Link>
             </p>
             <button
               type="submit"
-              className="w-full bg-blue-700 text-white py-2 rounded-full font-semibold"
+              className="w-full bg-red-700 text-white py-2 rounded-full font-semibold"
             >
               Login
             </button>
@@ -160,7 +160,7 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="w-1/2 bg-blue-700 text-white flex flex-col justify-center items-center">
+      <div className="w-1/2 bg-red-700 text-white flex flex-col justify-center items-center">
         <div className="z-20 text-center">
           <h1 className="text-4xl font-bold">
             WELCOME

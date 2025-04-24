@@ -79,7 +79,7 @@ export default function Signup() {
 
   return (
     <div className="flex h-screen w-screen font-sans">
-      <div className="w-1/2 bg-blue-700 text-white flex flex-col justify-center pl-16">
+      <div className="w-1/2 bg-red-700 text-white flex flex-col justify-center pl-16">
         <div className="z-20">
           <h1 className="text-4xl font-bold mb-4">
             HELLO, <br />
@@ -214,14 +214,14 @@ export default function Signup() {
 
             <button
               type="submit"
-              className="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800 transition"
+              className="w-full bg-red-700 text-white py-2 rounded hover:bg-red-800 transition"
             >
               Sign Up
             </button>
 
             <p className="text-sm text-center">
               Already have an account?{" "}
-              <Link to="/login" className="text-blue-600 hover:underline">
+              <Link to="/login" className="text-red-600 hover:underline">
                 Login
               </Link>
             </p>
