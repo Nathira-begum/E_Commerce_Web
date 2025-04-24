@@ -79,7 +79,7 @@ export default function Signup() {
 
   return (
     <div className="flex h-screen w-screen font-sans">
-      <div className="w-1/2 bg-blue-700 text-white flex flex-col justify-center pl-16">
+      <div className="w-1/2 bg-red-700 text-white flex flex-col justify-center pl-16">
         <div className="z-20">
           <h1 className="text-4xl font-bold mb-4">
             HELLO, <br />
