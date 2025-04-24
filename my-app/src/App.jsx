@@ -15,6 +15,7 @@ import MyProfile from "./components/MyProfile";
 import AdminLogin from "./pages/AdminLogin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Admin from "./pages/Admin";
+import Vendor from "./pages/Vendor";
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
         <Route path="/myaccount" element={<MyAccount/>} />
         <Route path="/admin-login" element={<AdminLogin/>} />
         <Route path="/admin" element={<ProtectedRoute><Admin/></ProtectedRoute>}/>
+        <Route path="/vendor" element={<Vendor/>} />
+
 
 
 
