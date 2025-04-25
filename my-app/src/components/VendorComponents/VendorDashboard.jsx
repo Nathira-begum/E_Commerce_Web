@@ -26,7 +26,7 @@ const Dashboard = () => {
         <img
           src={vendor.profilePic || "https://via.placeholder.com/150"}
           alt="Profile"
-          className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
+          className="w-32 h-32 rounded-full border-4 border-red-500 object-cover"
         />
         <div>
           <h2 className="text-xl font-bold">{vendor.name}</h2>

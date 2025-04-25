@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
-import Navbar from "./HomeComponents/Navbar";
-import { BiCategory } from "react-icons/bi";
-import { FaHeart, FaShoppingCart, FaUserCircle } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
+
 import {
   FaThLarge,
   FaBox,
@@ -13,6 +11,8 @@ import {
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Navbar from "../components/HomeComponents/Navbar";
+import Footer from "../components/HomeComponents/Footer";
 
 const MyProfile = () => {
   const [user, setUser] = useState({
@@ -25,7 +25,6 @@ const MyProfile = () => {
   const [dob, setDob] = useState(null);
   const [gender, setGender] = useState("");
   const [isEditable, setIsEditable] = useState(false);
-  const [cartItems, setCartItems] = useState([]); // Dummy placeholder
 
   useEffect(() => {
     const userDataString =
@@ -76,7 +75,7 @@ const MyProfile = () => {
       const storedUser = JSON.parse(storedUserString);
 
       // Check if userId exists in the storedUser
-      if (!storedUser || !storedUser._id) {
+      if (!storedUser._id) {
         throw new Error("User ID not found in user data.");
       }
 
@@ -151,9 +150,10 @@ const MyProfile = () => {
   return (
     <div className="w-full min-h-screen bg-gray-50">
       {/* Navbar */}
-      <Navbar/>
+      <Navbar />
+
       {/* Main Section */}
-      <div className="flex px-10 py-8 gap-6">
+      <div className="flex px-10 py-8 gap-6 mt-12">
         {/* Sidebar */}
         <div className="w-1/4 bg-white shadow-md rounded-lg p-6">
           <ul className="space-y-3 font-medium text-gray-700">
@@ -163,8 +163,8 @@ const MyProfile = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 py-2 border-b ${
                     isActive
-                      ? "text-black-500 border-black-500 hover:text-blue-500"
-                      : "border-gray-200"
+                      ? "text-black border-black"
+                      : "text-gray-700 border-gray-200 hover:text-red-500"
                   }`
                 }
               >
@@ -179,7 +179,7 @@ const MyProfile = () => {
                   `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
                     isActive
                       ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-blue-500"
+                      : "text-gray-700 border-gray-200 hover:text-red-500"
                   }`
                 }
               >
@@ -194,7 +194,7 @@ const MyProfile = () => {
                   `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
                     isActive
                       ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-blue-500"
+                      : "text-gray-700 border-gray-200 hover:text-red-500"
                   }`
                 }
               >
@@ -209,7 +209,7 @@ const MyProfile = () => {
                   `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
                     isActive
                       ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-blue-500"
+                      : "text-gray-700 border-gray-200 hover:text-red-500"
                   }`
                 }
               >
@@ -224,7 +224,7 @@ const MyProfile = () => {
                   `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
                     isActive
                       ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-blue-500"
+                      : "text-gray-700 border-gray-200 hover:text-red-500"
                   }`
                 }
               >
@@ -236,7 +236,7 @@ const MyProfile = () => {
               <NavLink
                 to="/myprofile"
                 className={({ isActive }) =>
-                  `flex items-center gap-3 py-2 border-b transition-colors duration-200 hover:text-blue-500 ${
+                  `flex items-center gap-3 py-2 border-b transition-colors duration-200 hover:text-red-500 ${
                     isActive
                       ? "text-black border-black"
                       : "text-gray-700 border-gray-200"
@@ -254,7 +254,7 @@ const MyProfile = () => {
         <div className="w-full md:w-3/4 bg-white shadow rounded-md p-6 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <label className="text-sm font-medium">First Name *</label>
+              <label className="text-sm font-medium">First Name </label>
               <input
                 type="text"
                 name="name"
@@ -265,7 +265,7 @@ const MyProfile = () => {
               />
             </div>
             <div className="flex-1">
-              <label className="text-sm font-medium">Last Name *</label>
+              <label className="text-sm font-medium">Last Name </label>
               <input
                 type="text"
                 name="lname"
@@ -278,7 +278,7 @@ const MyProfile = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Email Id *</label>
+            <label className="text-sm font-medium">Email Id </label>
             <input
               type="email"
               name="email"
@@ -290,7 +290,7 @@ const MyProfile = () => {
 
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <label className="text-sm font-medium">Phone Number *</label>
+              <label className="text-sm font-medium">Phone Number </label>
               <div className="flex items-center border border-gray-300 rounded">
                 <input
                   type="text"
@@ -303,7 +303,7 @@ const MyProfile = () => {
                   }`}
                 />
                 <button
-                  className="text-blue-600 font-semibold px-4"
+                  className="text-red-600 font-semibold px-4"
                   onClick={() => setIsEditable(true)}
                 >
                   CHANGE
@@ -341,7 +341,7 @@ const MyProfile = () => {
                   key={option}
                   className={`flex-1 px-4 py-2 border rounded ${
                     gender === option
-                      ? "bg-blue-300 text-black"
+                      ? "bg-red-500 text-black"
                       : "bg-white border-gray-300"
                   }`}
                   onClick={() => setGender(option)}
@@ -354,7 +354,7 @@ const MyProfile = () => {
 
           <div className="flex justify-center">
             <button
-              className="mt-6 bg-blue-500 text-white font-semibold px-6 py-2 rounded hover:bg-blue-700"
+              className="mt-6 bg-red-500 text-white font-semibold px-6 py-2 rounded hover:bg-red-600"
               onClick={handleSave}
             >
               SAVE CHANGES
@@ -364,47 +364,7 @@ const MyProfile = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-blue-900 mt-2 text-white py-10 px-10">
-        <h2 className="text-8xl font-extrabold mb-4 text-center font-stylish">
-          TRE<span className="text-blue-600">N</span>DIFY
-        </h2>
-        <div className="grid grid-cols-4 gap-6">
-          <div>
-            <h4 className="text-2xl font-extrabold mb-2">Company</h4>
-            <ul>
-              <li>About Us</li>
-              <li>Contact</li>
-              <li>Careers</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-2xl font-extrabold mb-2">Help</h4>
-            <ul>
-              <li>FAQs</li>
-              <li>Returns</li>
-              <li>Shipping</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-2xl font-extrabold mb-2">Follow Us</h4>
-            <ul>
-              <li>Instagram</li>
-              <li>Facebook</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-2xl font-extrabold mb-2">Newsletter</h4>
-            <input
-              type="email"
-              placeholder="Your email"
-              className="p-2 rounded w-full text-black"
-            />
-            <button className="bg-blue-600 w-full mt-2 p-2 rounded font-bold">
-              Subscribe
-            </button>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

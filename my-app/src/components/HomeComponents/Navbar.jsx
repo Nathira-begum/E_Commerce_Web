@@ -73,7 +73,7 @@ const Navbar = () => {
       </div>
 
       {/* CENTER */}
-      <div className="text-lg font-bold">
+      <div className="text-4xl font-bold">
         Tre<span className="text-red-600">n</span>dify
       </div>
 
@@ -102,7 +102,9 @@ const Navbar = () => {
           {user && showDropdown && (
             <div className="absolute right-0 mt-2 w-60 bg-white text-black shadow-md rounded-md overflow-hidden z-50">
               <div className="px-4 py-2 border-b border-gray-200">
-                <p className="font-semibold">{user.firstName || user.name}</p>
+                <p className="font-semibold">
+                  {user.firstName || user.lastname}
+                </p>
                 <p className="text-sm text-gray-500">{user.email}</p>
               </div>
               <Link

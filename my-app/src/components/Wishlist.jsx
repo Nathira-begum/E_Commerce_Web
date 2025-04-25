@@ -1,8 +1,20 @@
 // src/components/Wishlist.js
 import React from "react";
+import Navbar from "../components/HomeComponents/Navbar";
+import Footer from "../components/HomeComponents/Footer";
 
 const Wishlist = () => {
-  return <h1 className="text-center text-2xl mt-10">Your Wishlist</h1>;
+  const { wishlistItems } = useWishlist();
+
+  return (
+    <div className="w-full min-h-screen bg-gray-50">
+      <Navbar />
+
+     
+
+      {/* <Footer /> */}
+    </div>
+  );
 };
 
 export default Wishlist;

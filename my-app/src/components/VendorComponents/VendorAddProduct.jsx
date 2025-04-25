@@ -88,7 +88,7 @@ const AddProduct = () => {
         <input name="vendorEmail" type="email" value={product.vendorEmail} onChange={handleChange}
           placeholder="Vendor Email" className="w-full border p-2 rounded" required />
 
-        <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+        <button type="submit" className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">
           Add Product
         </button>
       </form>

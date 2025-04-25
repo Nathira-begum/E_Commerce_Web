@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { BiCategory } from "react-icons/bi";
-import { FaHeart, FaShoppingCart, FaUserCircle } from "react-icons/fa";
+import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { FaSortAmountDown } from "react-icons/fa";
+import Navbar from "./HomeComponents/Navbar";
+import Footer from "../components/HomeComponents/Footer";
 
 const categoryData = [
   {
@@ -14,6 +14,7 @@ const categoryData = [
     rating: 4,
     offer: "Buy 2 for 999",
     discount: 30,
+    image: "",
   },
   {
     name: "Adventure Tee",
@@ -23,6 +24,7 @@ const categoryData = [
     rating: 5,
     offer: "Buy 2 for 999",
     discount: 40,
+    image: "adventure.png",
   },
   {
     name: "Winter Hoodie",
@@ -32,6 +34,7 @@ const categoryData = [
     rating: 3,
     offer: "10% OFF",
     discount: 10,
+    image: "hoodie.png",
   },
 ];
 
@@ -69,7 +72,7 @@ const FilterSection = ({ title, options, selected, onChange }) => {
                 type="checkbox"
                 checked={selected.includes(option)}
                 onChange={() => onChange(title, option)}
-                className="w-4 h-4 border-gray-400 rounded text-blue-600 focus:ring-blue-500"
+                className="w-4 h-4 border-gray-400 rounded text-red-600 focus:ring-red-500"
               />
               {title === "rating" ? `${option}★ & up` : option}
             </label>
@@ -141,11 +144,12 @@ const CategoryPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedSort, setSelectedSort] = useState("Popularity");
 
-  const cartItems = []; // Replace with actual cart state or context
+  const [cartItems, setCartItems] = useState([]);
+  const [wishlistItems, setWishlistItems] = useState([]);
 
   const handleCheckboxChange = (filterType, value) => {
     setLoading(true);
-    setFilteredCategories([]); // Optional: show loader without old data
+    setFilteredCategories([]);
     setSelectedFilters((prev) => {
       const alreadySelected = prev[filterType].includes(value);
       const newFilters = alreadySelected
@@ -157,7 +161,7 @@ const CategoryPage = () => {
 
   const handleClearFilters = () => {
     setLoading(true);
-    setFilteredCategories([]); // Optional: hide data during load
+    setFilteredCategories([]);
     setSelectedFilters({
       size: [],
       brand: [],
@@ -168,11 +172,19 @@ const CategoryPage = () => {
     });
   };
 
+  const handleAddToCart = (product) => {
+    setCartItems((prev) => [...prev, product]);
+  };
+
+  const handleAddToWishlist = (product) => {
+    setWishlistItems((prev) => [...prev, product]);
+    // navigate("/wishlist");
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       let results = categoryData;
 
-      // Apply filters
       Object.keys(selectedFilters).forEach((key) => {
         if (selectedFilters[key].length > 0) {
           results = results.filter((item) =>
@@ -181,7 +193,6 @@ const CategoryPage = () => {
         }
       });
 
-      // Sorting logic
       if (selectedSort === "Price : High to Low") {
         results = [...results].sort((a, b) => b.discount - a.discount);
       } else if (selectedSort === "Price : Low to High") {
@@ -197,60 +208,15 @@ const CategoryPage = () => {
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
-      {/* Navbar */}
-      <nav className="w-full flex justify-between items-center px-10 py-6 shadow-md sticky top-0 bg-white z-50 font-semibold text-black">
-        <h2 className="absolute left-1/2 transform -translate-x-1/2 text-4xl font-extrabold text-center">
-          TRE<span className="text-blue-600">N</span>DIFY
-        </h2>
-        <div className="flex items-center gap-10 text-lg">
-          <a href="#" className="hover:text-blue-600 transition">
-            Women
-          </a>
-          <a href="#" className="hover:text-blue-600 transition">
-            Men
-          </a>
-          <a href="#" className="hover:text-blue-600 transition">
-            Kids
-          </a>
-          <div className="flex items-center border border-gray-300 rounded-md px-2 py-1 bg-white shadow-sm max-w-xs w-full">
-            <i className="fas fa-search text-gray-500 text-lg mr-2"></i>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full outline-none text-sm bg-transparent"
-            />
-          </div>
-        </div>
-        <div className="flex gap-9 text-3xl">
-          <Link to="/category">
-            <BiCategory className="hover:text-blue-500 cursor-pointer" />
-          </Link>
-          <Link to="/wishlist">
-            <FaHeart className="hover:text-blue-500 cursor-pointer" />
-          </Link>
-          <div className="relative cursor-pointer">
-            <FaShoppingCart className="hover:text-blue-500 text-2xl" />
-            {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-3 bg-blue-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                {cartItems.length}
-              </span>
-            )}
-          </div>
-          <Link to="/signup">
-            <FaUserCircle className="hover:text-blue-500 cursor-pointer" />
-          </Link>
-        </div>
-      </nav>
+      <Navbar/>
 
-      {/* Filter and Categories Section */}
-      <div className="flex w-full">
-        {/* Sidebar */}
-        <aside className="w-1/4 bg-white p-6 shadow-sm">
+      <div className="flex w-full mt-10">
+        <aside className="w-1/4 bg-white p-10 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Filters</h2>
             <button
               onClick={handleClearFilters}
-              className="text-sm text-blue-600 hover:underline focus:outline-none"
+              className="text-sm text-red-600 hover:underline focus:outline-none"
             >
               Clear All
             </button>
@@ -266,8 +232,7 @@ const CategoryPage = () => {
           ))}
         </aside>
 
-        {/* Categories List */}
-        <main className="w-3/4 p-6 relative">
+        <main className="w-3/4 p-10 relative">
           <SortBox
             selectedSort={selectedSort}
             setSelectedSort={setSelectedSort}
@@ -278,18 +243,44 @@ const CategoryPage = () => {
           <p className="text-sm text-gray-500 mb-6">
             {filteredCategories.length} Results
           </p>
+
           {loading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredCategories.map((category, index) => (
                 <div
                   key={index}
-                  className="bg-white shadow p-6 rounded-lg hover:shadow-lg cursor-pointer text-center text-xl font-medium"
+                  className="bg-white shadow p-4 rounded-lg hover:shadow-lg text-center flex flex-col"
                 >
-                  {category.name}
+                  <img
+                    src={`/icons/${category.image}`}
+                    alt={category.name}
+                    className="w-full h-40 object-contain mb-4"
+                  />
+                  <h3 className="text-lg font-semibold">{category.name}</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {category.size} | {category.brand} | {category.color}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {category.offer} | {category.discount}% OFF
+                  </p>
+                  <div className="mt-auto flex justify-between gap-2 pt-4">
+                    <button
+                      onClick={() => handleAddToCart(category)}
+                      className="bg-blue-500 text-white flex-1 py-2 rounded text-sm flex justify-center items-center gap-1"
+                    >
+                      <FaShoppingCart /> Cart
+                    </button>
+                    <button
+                      onClick={() => handleAddToWishlist(category)}
+                      className="bg-red-500 text-white flex-1 py-2 rounded text-sm flex justify-center items-center gap-1"
+                    >
+                      <FaHeart /> Wishlist
+                    </button>
+                  </div>
                 </div>
               ))}
               {filteredCategories.length === 0 && (
@@ -302,48 +293,7 @@ const CategoryPage = () => {
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-blue-900 mt-2 text-white py-10 px-10">
-        <h2 className="text-8xl font-extrabold mb-4 text-center font-stylish">
-          TRE<span className="text-blue-600">N</span>DIFY
-        </h2>
-        <div className="grid grid-cols-4 gap-6">
-          <div>
-            <h4 className="text-2xl font-extrabold mb-2">Company</h4>
-            <ul>
-              <li>About Us</li>
-              <li>Contact</li>
-              <li>Careers</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-2xl font-extrabold mb-2">Help</h4>
-            <ul>
-              <li>FAQs</li>
-              <li>Returns</li>
-              <li>Shipping</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-2xl font-extrabold mb-2">Follow Us</h4>
-            <ul>
-              <li>Instagram</li>
-              <li>Facebook</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-2xl font-extrabold mb-2">Newsletter</h4>
-            <input
-              type="email"
-              placeholder="Your email"
-              className="p-2 rounded w-full text-black"
-            />
-            <button className="bg-blue-600 w-full mt-2 p-2 rounded font-bold">
-              Subscribe
-            </button>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

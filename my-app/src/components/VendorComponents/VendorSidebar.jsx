@@ -18,7 +18,7 @@ const Sidebar = ({ setActiveTab }) => {
         {menuItems.map((item) => (
           <li
             key={item}
-            className="cursor-pointer hover:text-blue-400 transition"
+            className="cursor-pointer hover:text-red-400 transition"
             onClick={() => setActiveTab(item)}
           >
             {item}
