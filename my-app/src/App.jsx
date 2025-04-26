@@ -13,6 +13,7 @@ import MyPayment from "./components/MyPayment";
 import MyWallet from "./components/MyWallet";
 import MyProfile from "./components/MyProfile";
 import Vendor from "./pages/Vendor";
+import CartPage from "./components/Cart";
 
 function App() {
   return (
@@ -25,12 +26,9 @@ function App() {
         <Route path="/shop" element={<Shop />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/category" element={<Category />} />
-        <Route path="/myaccount" element={<MyAccount/>} />
-        <Route path="/vendor" element={<Vendor/>} />
-
-
-
-
+        <Route path="/myaccount" element={<MyAccount />} />
+        <Route path="/vendor" element={<Vendor />} />
+        <Route path="/cart" element={<CartPage />} />
 
         {/* NESTED ROUTES */}
         <Route path="myprofile" element={<MyProfile />}>

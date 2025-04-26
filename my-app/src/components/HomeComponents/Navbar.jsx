@@ -12,31 +12,44 @@ const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [user, setUser] = useState(null);
+  const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const navigate = useNavigate();
 
+  // load counts from localStorage
+  const loadCounts = () => {
+    const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    const wishlistItems = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setCartCount(cartItems.length);
+    setWishlistCount(wishlistItems.length);
+  };
+
   useEffect(() => {
+    // load user
     const userData = JSON.parse(localStorage.getItem("user"));
-    const oauthUser = JSON.parse(localStorage.getItem("profile")); // Google/Facebook OAuth user
-    if (userData) {
-      setUser(userData);
-    } else if (oauthUser) {
-      setUser(oauthUser);
-    }
+    const oauthUser = JSON.parse(localStorage.getItem("profile"));
+    setUser(userData || oauthUser);
+
+    // initial counts
+    loadCounts();
+
+    // listen for our custom "cart_update" and "wishlist_update" events
+    window.addEventListener("cart_update", loadCounts);
+    window.addEventListener("wishlist_update", loadCounts);
+    return () => {
+      window.removeEventListener("cart_update", loadCounts);
+      window.removeEventListener("wishlist_update", loadCounts);
+    };
   }, []);
 
   const handleProfileClick = () => {
-    console.log("User:", user);
-    if (user) {
-      setShowDropdown((prev) => !prev);
-    } else {
-      navigate("/signup");
-    }
+    if (user) setShowDropdown((p) => !p);
+    else navigate("/signup");
   };
 
   const handleLogout = () => {
-    console.log("Logging out...");
     localStorage.removeItem("user");
-    localStorage.removeItem("profile"); // Remove OAuth login too
+    localStorage.removeItem("profile");
     setUser(null);
     setShowDropdown(false);
     navigate("/signup");
@@ -47,19 +60,19 @@ const Navbar = () => {
       {/* LEFT */}
       <div className="flex items-center gap-10">
         <Link to="/category-women">
-          <h2 className="cursor-pointer hover:text-gray-300">Women</h2>
+          <h2>Women</h2>
         </Link>
         <Link to="/category-men">
-          <h2 className="cursor-pointer hover:text-gray-300">Men</h2>
+          <h2>Men</h2>
         </Link>
         <Link to="/category-kids">
-          <h2 className="cursor-pointer hover:text-gray-300">Kids</h2>
+          <h2>Kids</h2>
         </Link>
         <div className="relative">
           <FaSearch
-            size={16}
-            className="cursor-pointer hover:text-gray-300"
             onClick={() => setShowSearch((p) => !p)}
+            className="cursor-pointer"
+            size={16}
           />
           {showSearch && (
             <input
@@ -80,28 +93,37 @@ const Navbar = () => {
       {/* RIGHT */}
       <div className="flex items-center gap-10">
         <Link to="/category">
-          <FaThLarge size={20} className="cursor-pointer hover:text-gray-300" />
-        </Link>
-        <Link to="/wishlist">
-          <FaHeart size={20} className="cursor-pointer hover:text-gray-300" />
-        </Link>
-        <Link to="/cart">
-          <FaShoppingCart
-            size={20}
-            className="cursor-pointer hover:text-gray-300"
-          />
+          <FaThLarge size={20} className="cursor-pointer" />
         </Link>
 
-        {/* Profile Icon + Dropdown */}
+        <Link to="/wishlist" className="relative">
+          <FaHeart size={20} className="cursor-pointer" />
+          {wishlistCount > 0 && (
+            <span className="absolute -top-2 -right-3 bg-red-500 rounded-full text-xs w-5 h-5 flex items-center justify-center">
+              {wishlistCount}
+            </span>
+          )}
+        </Link>
+
+        <Link to="/cart" className="relative">
+          <FaShoppingCart size={20} className="cursor-pointer" />
+          {cartCount > 0 && (
+            <span className="absolute -top-2 -right-3 bg-blue-500 rounded-full text-xs w-5 h-5 flex items-center justify-center">
+              {cartCount}
+            </span>
+          )}
+        </Link>
+
+        {/* Profile */}
         <div className="relative">
           <FaUser
-            size={20}
-            className="cursor-pointer hover:text-gray-300"
             onClick={handleProfileClick}
+            size={20}
+            className="cursor-pointer"
           />
           {user && showDropdown && (
             <div className="absolute right-0 mt-2 w-60 bg-white text-black shadow-md rounded-md overflow-hidden z-50">
-              <div className="px-4 py-2 border-b border-gray-200">
+              <div className="px-4 py-2 border-b">
                 <p className="font-semibold">
                   {user.firstName || user.lastname}
                 </p>
@@ -110,7 +132,6 @@ const Navbar = () => {
               <Link
                 to="/myaccount"
                 className="block px-4 py-2 hover:bg-gray-100"
-                onClick={() => setShowDropdown(false)}
               >
                 My Account
               </Link>

@@ -16,8 +16,8 @@ import Footer from "../components/HomeComponents/Footer";
 
 const MyProfile = () => {
   const [user, setUser] = useState({
-    name: "",
-    lname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
   });
@@ -35,8 +35,8 @@ const MyProfile = () => {
         const storedUser = JSON.parse(userDataString);
 
         setUser({
-          name: storedUser.firstName || "",
-          lname: storedUser.lastName || "",
+          firstName: storedUser.firstName || "",
+          lastName: storedUser.lastName || "",
           email: storedUser.email || "",
           phone: storedUser.phone || "",
         });
@@ -92,8 +92,8 @@ const MyProfile = () => {
             },
             body: JSON.stringify({
               userId,
-              firstName: updatedUser.name,
-              lastName: updatedUser.lname,
+              firstName: updatedUser.firstName,
+              lastName: updatedUser.lastName,
               email: updatedUser.email,
               phone: updatedUser.phone,
               gender: updatedUser.gender,
@@ -127,8 +127,8 @@ const MyProfile = () => {
           "user",
           JSON.stringify({
             _id: storedUser._id,
-            firstName: updatedUser.name,
-            lastName: updatedUser.lname,
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
             phone: updatedUser.phone,
             gender: updatedUser.gender,
             dob: updatedUser.dob,
@@ -257,8 +257,8 @@ const MyProfile = () => {
               <label className="text-sm font-medium">First Name </label>
               <input
                 type="text"
-                name="name"
-                value={user.name}
+                name="firstName"
+                value={user.firstName}
                 // readOnly
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
@@ -268,8 +268,8 @@ const MyProfile = () => {
               <label className="text-sm font-medium">Last Name </label>
               <input
                 type="text"
-                name="lname"
-                value={user.lname || ""}
+                name="lastName"
+                value={user.lastName || ""}
                 // readOnly
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
