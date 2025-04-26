@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  FaShoppingCart,
-  FaHeart,
-  FaUser,
-  FaSearch,
-  FaThLarge,
-} from "react-icons/fa";
+import { FaShoppingCart, FaHeart, FaUser, FaSearch, FaThLarge } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
@@ -16,7 +10,7 @@ const Navbar = () => {
   const [wishlistCount, setWishlistCount] = useState(0);
   const navigate = useNavigate();
 
-  // load counts from localStorage
+  // Load counts from localStorage
   const loadCounts = () => {
     const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     const wishlistItems = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -33,7 +27,7 @@ const Navbar = () => {
     // initial counts
     loadCounts();
 
-    // listen for our custom "cart_update" and "wishlist_update" events
+    // listen for updates
     window.addEventListener("cart_update", loadCounts);
     window.addEventListener("wishlist_update", loadCounts);
     return () => {
@@ -43,7 +37,7 @@ const Navbar = () => {
   }, []);
 
   const handleProfileClick = () => {
-    if (user) setShowDropdown((p) => !p);
+    if (user) setShowDropdown(p => !p);
     else navigate("/signup");
   };
 
@@ -59,21 +53,11 @@ const Navbar = () => {
     <div className="fixed top-0 left-0 w-full bg-black h-14 flex justify-between items-center px-20 text-white z-50">
       {/* LEFT */}
       <div className="flex items-center gap-10">
-        <Link to="/category-women">
-          <h2>Women</h2>
-        </Link>
-        <Link to="/category-men">
-          <h2>Men</h2>
-        </Link>
-        <Link to="/category-kids">
-          <h2>Kids</h2>
-        </Link>
+        <Link to="/category-women"><h2>Women</h2></Link>
+        <Link to="/category-men"><h2>Men</h2></Link>
+        <Link to="/category-kids"><h2>Kids</h2></Link>
         <div className="relative">
-          <FaSearch
-            onClick={() => setShowSearch((p) => !p)}
-            className="cursor-pointer"
-            size={16}
-          />
+          <FaSearch onClick={() => setShowSearch(p => !p)} size={16} className="cursor-pointer"/>
           {showSearch && (
             <input
               type="text"
@@ -92,12 +76,10 @@ const Navbar = () => {
 
       {/* RIGHT */}
       <div className="flex items-center gap-10">
-        <Link to="/category">
-          <FaThLarge size={20} className="cursor-pointer" />
-        </Link>
+        <Link to="/category"><FaThLarge size={20} className="cursor-pointer"/></Link>
 
         <Link to="/wishlist" className="relative">
-          <FaHeart size={20} className="cursor-pointer" />
+          <FaHeart size={20} className="cursor-pointer"/>
           {wishlistCount > 0 && (
             <span className="absolute -top-2 -right-3 bg-red-500 rounded-full text-xs w-5 h-5 flex items-center justify-center">
               {wishlistCount}
@@ -106,7 +88,7 @@ const Navbar = () => {
         </Link>
 
         <Link to="/cart" className="relative">
-          <FaShoppingCart size={20} className="cursor-pointer" />
+          <FaShoppingCart size={20} className="cursor-pointer"/>
           {cartCount > 0 && (
             <span className="absolute -top-2 -right-3 bg-blue-500 rounded-full text-xs w-5 h-5 flex items-center justify-center">
               {cartCount}
@@ -116,29 +98,15 @@ const Navbar = () => {
 
         {/* Profile */}
         <div className="relative">
-          <FaUser
-            onClick={handleProfileClick}
-            size={20}
-            className="cursor-pointer"
-          />
+          <FaUser onClick={handleProfileClick} size={20} className="cursor-pointer"/>
           {user && showDropdown && (
             <div className="absolute right-0 mt-2 w-60 bg-white text-black shadow-md rounded-md overflow-hidden z-50">
-              <div className="px-4 py-2 border-b">
-                <p className="font-semibold">
-                  {user.firstName || user.lastname}
-                </p>
+              <div className="px-4 py-2 border-b border-gray-200">
+                <p className="font-semibold">{user.firstName || user.lastname}</p>
                 <p className="text-sm text-gray-500">{user.email}</p>
               </div>
-              <Link
-                to="/myaccount"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                My Account
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
-              >
+              <Link to="/myaccount" className="block px-4 py-2 hover:bg-gray-100">My Account</Link>
+              <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100">
                 Logout
               </button>
             </div>

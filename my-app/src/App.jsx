@@ -13,7 +13,7 @@ import MyPayment from "./components/MyPayment";
 import MyWallet from "./components/MyWallet";
 import MyProfile from "./components/MyProfile";
 import Vendor from "./pages/Vendor";
-import CartPage from "./components/Cart";
+import CartPage from "./components/cart";
 
 function App() {
   return (
