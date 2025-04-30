@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("http://localhost:5000/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -16,13 +16,8 @@ const Login = () => {
 
       const data = await res.json();
       if (res.ok) {
-        if (data.vendor.status !== "approved") {
-          alert("Your account is pending admin approval.");
-          return;
-        }
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("email", data.vendor.email);
-        navigate("/vendor");
+        localStorage.setItem("adminToken", data.token);
+        navigate("/admin/dashboard");
       } else {
         alert(data.message);
       }
@@ -33,7 +28,7 @@ const Login = () => {
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Vendor Login</h2>
+      <h2 className="text-xl font-bold mb-4">Admin Login</h2>
       <input
         type="email"
         value={email}
@@ -51,11 +46,8 @@ const Login = () => {
       <button onClick={handleLogin} className="bg-blue-500 text-white px-4 py-2">
         Login
       </button>
-      <p className="mt-4 text-sm">
-        Don't have an account? <Link to="/vendor/register" className="text-blue-500 underline">Sign up here</Link>
-      </p>
     </div>
   );
 };
 
-export default Login;
+export default AdminLogin;

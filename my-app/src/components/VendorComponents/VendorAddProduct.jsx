@@ -12,6 +12,7 @@ const VendorAddProduct = () => {
     tags: [],
     image: '',
     description: '',
+    vendorEmail: '',
   });
 
   const [sizeOptions] = useState(['S', 'M', 'L', 'XL', 'XXL',28,30,32,34,36,38]);  // Example sizes
@@ -224,6 +225,18 @@ const VendorAddProduct = () => {
             value={formData.description}
             onChange={handleInputChange}
             className="w-full border px-4 py-2 rounded-lg"
+          />
+        </div>
+
+        {/* Product Name */}
+        <div>
+          <label className="block font-medium mb-1">Vendor Email</label>
+          <input
+            type="text"
+            name="vendorEmail"
+            onChange={handleInputChange}
+            className="w-full border px-4 py-2 rounded-lg"
+            required
           />
         </div>
 

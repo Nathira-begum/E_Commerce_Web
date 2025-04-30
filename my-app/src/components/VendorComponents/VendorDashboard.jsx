@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
 } from "recharts";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
 const data = [
   { name: "Jan", value: 2 },
   { name: "Feb", value: 8 },
@@ -34,43 +40,64 @@ const fadeUp = {
 };
 
 const Dashboard = () => {
-
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("vendorToken");
-    if (!token) {
-      navigate("/vendor/login");
-    }
-  }, [navigate]);
+    const token = localStorage.getItem("token");
+    if (!token) return navigate("/vendor/login");
 
-  const vendor = JSON.parse(localStorage.getItem("vendor"));
+    fetch("http://localhost:5000/api/products/vendor", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Fetch error:", err));
+  }, []);
+  useEffect(() => {
+    const vendorData = localStorage.getItem("vendor");
+    if (vendorData) {
+      setUser(JSON.parse(vendorData));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("vendor");
+    window.location.href = "/vendor/login"; // Redirect to login or home
+  };
+
   return (
-    <motion.div
-      className="p-6"
-      initial="hidden"
-      animate="visible"
-      variants={fadeUp}
-    >
+    <motion.div className="p-6" initial="hidden" animate="visible" variants={fadeUp}>
       {/* Header */}
-      <motion.div
-        className="flex justify-between items-center mb-6"
-        variants={fadeUp}
-        custom={0.1}
-      >
+      <motion.div className="flex justify-between items-center mb-6" variants={fadeUp} custom={0.1}>
         <div>
-          <h1 className="text-xl font-bold">Hi, VIJAY NARASINGAM</h1>
-          <p className="text-sm text-gray-500">Here’s what’s happening your store today</p>
+          <h1 className="text-xl font-bold">Hi, {user?.name || "Vendor"}</h1>
+          <p className="text-sm text-gray-500">Here’s what’s happening in your store today</p>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="relative flex items-center space-x-4">
           <div className="w-10 h-10 rounded-full border flex items-center justify-center">
             <i className="fas fa-bell text-gray-500"></i>
           </div>
-          <img
-            src="https://i.pravatar.cc/300"
-            alt="profile"
-            className="w-10 h-10 rounded-full border"
-          />
+          {/* Profile Image with Dropdown */}
+          <div className="relative">
+            <img
+              src={user?.profile || "https://i.pravatar.cc/300"}
+              alt="profile"
+              className="w-10 h-10 rounded-full border cursor-pointer"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            />
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-10">
+                <button
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
 

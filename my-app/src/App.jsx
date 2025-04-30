@@ -15,7 +15,12 @@ import MyProfile from "./components/MyProfile";
 import Vendor from "./pages/Vendor";
 import CartPage from "./components/cart";
 import VendorLogin from "./components/VendorComponents/VendorLogin";
-import VendorSignup from "./components/VendorComponents/VendorSignup";
+import VendorRegister from "./components/VendorComponents/VendorRegister";
+import AdminLogin from "./pages/AdminLogin"
+import AdminDashboard from "./pages/AdminDashboard"
+import PendingVendors from "./pages/PendingVendors"
+import PendingProducts from "./pages/PendingProducts"
+
 
 function App() {
   return (
@@ -29,10 +34,17 @@ function App() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/category" element={<Category />} />
         <Route path="/myaccount" element={<MyAccount />} />
-        <Route path="/vendor" element={<Vendor />} />
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/vendorlogin" element={<VendorLogin />} />
-        <Route path="/vendorsignup" element={<VendorSignup />} />
+
+        <Route path="/vendor/login" element={<VendorLogin />} />
+        <Route path="/vendor/register" element={<VendorRegister />} />
+        <Route path="/vendor" element={<Vendor />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/vendors" element={<PendingVendors />} />
+        <Route path="/admin/products" element={<PendingProducts />} />
+
+
 
 
         {/* NESTED ROUTES */}

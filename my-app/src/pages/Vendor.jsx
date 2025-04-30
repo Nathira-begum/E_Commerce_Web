@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import VendorSidebar from '../components/VendorComponents/VendorSidebar';
 import VendorDashboard from '../components/VendorComponents/VendorDashboard';
 import VendorAddProduct from '../components/VendorComponents/VendorAddProduct';
-import VendorMyProducts from '../components/VendorComponents/VendorMyProducts';
-import VendorOrders from '../components/VendorComponents/VendorOrders';
+import VendorMyProductPage from '../components/VendorComponents/VendorMyProductPage';
+import VendorOrders from '../components/VendorComponents/vendorOrders';
 import VendorEarnings from '../components/VendorComponents/VendorEarnings';
 import VendorSettings from '../components/VendorComponents/VendorSettings';
 
@@ -14,7 +14,7 @@ const Vendor = () => {
     switch (activeTab) {
       case "Dashboard": return <VendorDashboard />;
       case "Add Product": return <VendorAddProduct />;
-      case "My Products": return <VendorMyProducts />;
+      case "My Products": return <VendorMyProductPage />;
       case "Orders": return <VendorOrders />;
       case "Earnings": return <VendorEarnings />;
       case "Account Settings": return <VendorSettings />;
