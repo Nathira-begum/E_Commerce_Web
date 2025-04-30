@@ -14,6 +14,8 @@ import MyWallet from "./components/MyWallet";
 import MyProfile from "./components/MyProfile";
 import Vendor from "./pages/Vendor";
 import CartPage from "./components/cart";
+import VendorLogin from "./components/VendorComponents/VendorLogin";
+import VendorSignup from "./components/VendorComponents/VendorSignup";
 
 function App() {
   return (
@@ -29,6 +31,9 @@ function App() {
         <Route path="/myaccount" element={<MyAccount />} />
         <Route path="/vendor" element={<Vendor />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/vendorlogin" element={<VendorLogin />} />
+        <Route path="/vendorsignup" element={<VendorSignup />} />
+
 
         {/* NESTED ROUTES */}
         <Route path="myprofile" element={<MyProfile />}>

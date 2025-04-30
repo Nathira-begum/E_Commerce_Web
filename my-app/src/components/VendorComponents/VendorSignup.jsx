@@ -1,60 +1,58 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
-  const [vendor, setVendor] = useState({ username: '', email: '', password: '' });
+export default function VendorSignup() {
+  const navigate = useNavigate(); // Initialize the navigate function
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    shopName: "",
+    address: "",
+    status: "pending" // default status
+  });
 
   const handleChange = (e) => {
-    setVendor({ ...vendor, [e.target.name]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSignup = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
     try {
-      const res = await axios.post('http://localhost:5000/api/vendors/register', vendor);
-      alert(res.data.message || 'Signup successful');
-      setVendor({ username: '', email: '', password: '' }); // clear inputs
+      await axios.post("http://localhost:5000/api/vendor/signup", form);
+      alert("Signup successful! Please login.");
+      navigate("/vendorlogin");  // Use navigate to redirect to login page
     } catch (err) {
-      alert(err.response?.data?.error || 'Signup failed');
+      alert(err.response?.data?.msg || "Signup failed");
     }
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto mt-10 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Vendor Signup</h2>
-      <form onSubmit={handleSignup} className="space-y-4">
-        <input
-          name="username"
-          value={vendor.username}
-          onChange={handleChange}
-          className="w-full border p-2"
-          placeholder="Username"
-        />
-        <input
-          name="email"
-          value={vendor.email}
-          onChange={handleChange}
-          className="w-full border p-2"
-          placeholder="Email"
-          type="email"
-        />
-        <input
-          name="password"
-          value={vendor.password}
-          onChange={handleChange}
-          className="w-full border p-2"
-          placeholder="Password"
-          type="password"
-        />
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-          type="submit"
-        >
-          Sign Up
-        </button>
+    <div className="form-container">
+      <form onSubmit={handleSubmit}>
+        <h2>Vendor Signup</h2>
+        <input name="name" placeholder="Full Name" onChange={handleChange} required />
+        <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
+        <input name="phone" type="tel" placeholder="Phone Number" onChange={handleChange} required />
+        <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+        <input name="confirmPassword" type="password" placeholder="Confirm Password" onChange={handleChange} required />
+        <input name="shopName" placeholder="Shop Name" onChange={handleChange} required />
+        <input name="address" placeholder="Address" onChange={handleChange} required />
+        <button type="submit">Sign Up</button>
+        <div className="nav-link">
+          <span>Already have an account? <a href="/vendorlogin">Login</a></span>
+        </div>
       </form>
     </div>
   );
-};
-
-export default Signup;
+}

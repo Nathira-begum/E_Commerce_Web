@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
-
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 const data = [
   { name: "Jan", value: 2 },
   { name: "Feb", value: 8 },
@@ -33,6 +34,17 @@ const fadeUp = {
 };
 
 const Dashboard = () => {
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("vendorToken");
+    if (!token) {
+      navigate("/vendor/login");
+    }
+  }, [navigate]);
+
+  const vendor = JSON.parse(localStorage.getItem("vendor"));
   return (
     <motion.div
       className="p-6"
