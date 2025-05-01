@@ -16,6 +16,8 @@ const MyAccount = () => {
 
   // Get user data from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
+  const profile = JSON.parse(localStorage.getItem("profile"));
+
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
@@ -126,14 +128,14 @@ const MyAccount = () => {
             {/* Left Section */}
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-red-400 rounded-full flex items-center justify-center text-2xl font-bold text-black">
-                {user?.firstName?.[0]?.toUpperCase() || "U"}
+                {user?.firstName?.[0]?.toUpperCase() || profile?.firstName?.[0]?.toUpperCase() ||"U"}
               </div>
               <div>
                 <p className="text-lg font-semibold text-gray-800">
-                  {user?.firstName || "Guest"}
+                  {user?.firstName || profile?.firstName || "Guest"}
                 </p>
                 <p className="text-sm text-gray-600">
-                  {user?.email || "Email not available"}
+                  {user?.email || profile?.email|| "Email not available"}
                 </p>
                 <p className="text-sm text-gray-600">
                   {user?.phone || "Phone not available"}

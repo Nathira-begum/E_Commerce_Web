@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { FaShoppingCart, FaHeart, FaUser, FaSearch, FaThLarge } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaHeart,
+  FaUser,
+  FaSearch,
+  FaThLarge,
+} from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const navigate = useNavigate();
@@ -19,32 +26,50 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    // load user
-    const userData = JSON.parse(localStorage.getItem("user"));
-    const oauthUser = JSON.parse(localStorage.getItem("profile"));
-    setUser(userData || oauthUser);
+    // Handle OAuth callback params if present
+    const q = new URLSearchParams(window.location.search);
+    const firstName = q.get("firstName");
+    const lastName = q.get("lastName");
+    const email = q.get("email");
 
-    // initial counts
+    // 1️⃣ Check if there's OAuth profile data, store it in localStorage
+    if (email) {
+      const oauthProfile = { firstName, lastName, email };
+      localStorage.setItem("profile", JSON.stringify(oauthProfile));
+      setProfile(oauthProfile);
+      window.history.replaceState({}, document.title, window.location.pathname); // Clean URL
+    }
+
+    // 2️⃣ Load user from localStorage (whether normal or OAuth login)
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const oauthStoredProfile = JSON.parse(localStorage.getItem("profile"));
+
+    setProfile(storedUser || oauthStoredProfile);
+
+    // 3️⃣ Load cart and wishlist counts & listen for updates
     loadCounts();
-
-    // listen for updates
     window.addEventListener("cart_update", loadCounts);
     window.addEventListener("wishlist_update", loadCounts);
+
     return () => {
       window.removeEventListener("cart_update", loadCounts);
       window.removeEventListener("wishlist_update", loadCounts);
     };
-  }, []);
+  }, []); // Empty array to run only on mount
 
   const handleProfileClick = () => {
-    if (user) setShowDropdown(p => !p);
-    else navigate("/signup");
+    //  If profile exists, show dropdown, else redirect to signup
+    if (profile || user) {
+      setShowDropdown((p) => !p);
+    } else {
+      navigate("/signup"); // Redirect to signup if no profile
+    }
   };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("profile");
-    setUser(null);
+    setProfile(null); // Clear profile from state
     setShowDropdown(false);
     navigate("/signup");
   };
@@ -53,11 +78,21 @@ const Navbar = () => {
     <div className="fixed top-0 left-0 w-full bg-black h-14 flex justify-between items-center px-20 text-white z-50">
       {/* LEFT */}
       <div className="flex items-center gap-10">
-        <Link to="/category-women"><h2>Women</h2></Link>
-        <Link to="/category-men"><h2>Men</h2></Link>
-        <Link to="/category-kids"><h2>Kids</h2></Link>
+        <Link to="/category-women">
+          <h2>Women</h2>
+        </Link>
+        <Link to="/category-men">
+          <h2>Men</h2>
+        </Link>
+        <Link to="/category-kids">
+          <h2>Kids</h2>
+        </Link>
         <div className="relative">
-          <FaSearch onClick={() => setShowSearch(p => !p)} size={16} className="cursor-pointer"/>
+          <FaSearch
+            onClick={() => setShowSearch((p) => !p)}
+            size={16}
+            className="cursor-pointer"
+          />
           {showSearch && (
             <input
               type="text"
@@ -76,10 +111,12 @@ const Navbar = () => {
 
       {/* RIGHT */}
       <div className="flex items-center gap-10">
-        <Link to="/category"><FaThLarge size={20} className="cursor-pointer"/></Link>
+        <Link to="/category">
+          <FaThLarge size={20} className="cursor-pointer" />
+        </Link>
 
         <Link to="/wishlist" className="relative">
-          <FaHeart size={20} className="cursor-pointer"/>
+          <FaHeart size={20} className="cursor-pointer" />
           {wishlistCount > 0 && (
             <span className="absolute -top-2 -right-3 bg-red-500 rounded-full text-xs w-5 h-5 flex items-center justify-center">
               {wishlistCount}
@@ -88,7 +125,7 @@ const Navbar = () => {
         </Link>
 
         <Link to="/cart" className="relative">
-          <FaShoppingCart size={20} className="cursor-pointer"/>
+          <FaShoppingCart size={20} className="cursor-pointer" />
           {cartCount > 0 && (
             <span className="absolute -top-2 -right-3 bg-blue-500 rounded-full text-xs w-5 h-5 flex items-center justify-center">
               {cartCount}
@@ -98,15 +135,35 @@ const Navbar = () => {
 
         {/* Profile */}
         <div className="relative">
-          <FaUser onClick={handleProfileClick} size={20} className="cursor-pointer"/>
-          {user && showDropdown && (
+          <FaUser
+            onClick={handleProfileClick}
+            size={20}
+            className="cursor-pointer"
+          />
+          {profile && showDropdown && (
             <div className="absolute right-0 mt-2 w-60 bg-white text-black shadow-md rounded-md overflow-hidden z-50">
               <div className="px-4 py-2 border-b border-gray-200">
-                <p className="font-semibold">{user.firstName || user.lastname}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
+                <p className="font-semibold">
+                  {profile.firstName || profile.lastName
+                    ? `${profile.firstName || ""} ${
+                        profile.lastName || ""
+                      }`.trim()
+                    : profile.displayName || "User"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {profile.email || "No email"}
+                </p>
               </div>
-              <Link to="/myaccount" className="block px-4 py-2 hover:bg-gray-100">My Account</Link>
-              <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100">
+              <Link
+                to="/myaccount"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
+                My Account
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+              >
                 Logout
               </button>
             </div>
