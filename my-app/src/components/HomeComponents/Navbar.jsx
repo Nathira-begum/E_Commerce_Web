@@ -10,6 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -17,7 +18,6 @@ const Navbar = () => {
   const [wishlistCount, setWishlistCount] = useState(0);
   const navigate = useNavigate();
 
-  // Load counts from localStorage
   const loadCounts = () => {
     const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     const wishlistItems = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -26,27 +26,23 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    // Handle OAuth callback params if present
     const q = new URLSearchParams(window.location.search);
     const firstName = q.get("firstName");
     const lastName = q.get("lastName");
     const email = q.get("email");
 
-    // 1️⃣ Check if there's OAuth profile data, store it in localStorage
     if (email) {
       const oauthProfile = { firstName, lastName, email };
       localStorage.setItem("profile", JSON.stringify(oauthProfile));
       setProfile(oauthProfile);
-      window.history.replaceState({}, document.title, window.location.pathname); // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    // 2️⃣ Load user from localStorage (whether normal or OAuth login)
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const oauthStoredProfile = JSON.parse(localStorage.getItem("profile"));
 
     setProfile(storedUser || oauthStoredProfile);
 
-    // 3️⃣ Load cart and wishlist counts & listen for updates
     loadCounts();
     window.addEventListener("cart_update", loadCounts);
     window.addEventListener("wishlist_update", loadCounts);
@@ -55,23 +51,30 @@ const Navbar = () => {
       window.removeEventListener("cart_update", loadCounts);
       window.removeEventListener("wishlist_update", loadCounts);
     };
-  }, []); // Empty array to run only on mount
+  }, []);
 
   const handleProfileClick = () => {
-    //  If profile exists, show dropdown, else redirect to signup
     if (profile || user) {
-      setShowDropdown((p) => !p);
+      setShowDropdown((prev) => !prev);
     } else {
-      navigate("/signup"); // Redirect to signup if no profile
+      navigate("/signup");
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("profile");
-    setProfile(null); // Clear profile from state
+    setProfile(null);
     setShowDropdown(false);
     navigate("/signup");
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      navigate(`/category?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSearch(false);
+      setSearchQuery("");
+    }
   };
 
   return (
@@ -89,7 +92,7 @@ const Navbar = () => {
         </Link>
         <div className="relative">
           <FaSearch
-            onClick={() => setShowSearch((p) => !p)}
+            onClick={() => setShowSearch((prev) => !prev)}
             size={16}
             className="cursor-pointer"
           />
@@ -97,6 +100,9 @@ const Navbar = () => {
             <input
               type="text"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               className="absolute top-8 left-0 p-1 rounded-md bg-white text-black text-sm w-36"
               autoFocus
             />
