@@ -16,10 +16,11 @@ import Vendor from "./pages/Vendor";
 import CartPage from "./components/cart";
 import VendorLogin from "./components/VendorComponents/VendorLogin";
 import VendorRegister from "./components/VendorComponents/VendorRegister";
-import AdminLogin from "./pages/AdminLogin"
-import AdminDashboard from "./pages/AdminDashboard"
-import PendingVendors from "./pages/PendingVendors"
-import PendingProducts from "./pages/PendingProducts"
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import PendingVendors from "./pages/PendingVendors";
+import PendingProducts from "./pages/PendingProducts";
+// import SearchResult from "./components/HomeComponents/SearchResults";
 
 
 function App() {
@@ -35,6 +36,9 @@ function App() {
         <Route path="/category" element={<Category />} />
         <Route path="/myaccount" element={<MyAccount />} />
         <Route path="/cart" element={<CartPage />} />
+        {/* <Route path="/search" element={<SearchResult />} /> */}
+
+        
 
         <Route path="/vendor/login" element={<VendorLogin />} />
         <Route path="/vendor/register" element={<VendorRegister />} />

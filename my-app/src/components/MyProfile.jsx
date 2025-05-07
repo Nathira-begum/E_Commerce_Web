@@ -22,6 +22,11 @@ const MyProfile = () => {
     phone: "",
   });
 
+  const [profile, setProfile] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
   const [dob, setDob] = useState(null);
   const [gender, setGender] = useState("");
   const [isEditable, setIsEditable] = useState(false);
@@ -29,6 +34,8 @@ const MyProfile = () => {
   useEffect(() => {
     const userDataString =
       localStorage.getItem("user") || sessionStorage.getItem("user");
+    const profileDataString =
+      localStorage.getItem("profile") || sessionStorage.getItem("profile");
 
     try {
       if (userDataString && userDataString !== "undefined") {
@@ -43,6 +50,20 @@ const MyProfile = () => {
 
         setDob(storedUser.dob ? new Date(storedUser.dob) : null);
         setGender(storedUser.gender || "");
+      }
+
+      if (profileDataString && profileDataString !== "undefined") {
+        const storedProfile = JSON.parse(profileDataString);
+
+        setProfile({
+          firstName: storedProfile.firstName || "",
+          lastName: storedProfile.lastName || "",
+          email: storedProfile.email || "",
+        });
+
+        // Also update individual state
+        setDob(storedProfile.dob ? new Date(storedProfile.dob) : null);
+        setGender(storedProfile.gender || "");
       }
     } catch (error) {
       console.error("Invalid user data in storage:", error);
@@ -63,6 +84,15 @@ const MyProfile = () => {
         dob: dob ? dob.toISOString() : null,
         gender: gender, // <-- add this explicitly
       };
+
+      const updatedProfile = {
+        ...profile,
+        dob,
+        gender,
+      };
+
+      localStorage.setItem("profile", JSON.stringify(updatedProfile));
+      setProfile(updatedProfile);
 
       console.log(updatedUser, "updateduser<<<<<<<<");
       const storedUserString = localStorage.getItem("user");
