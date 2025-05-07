@@ -5,7 +5,7 @@ import ForgotPassword from "./components/ForgotPassword";
 import Home from "./pages/Home";
 import Shop from "./components/Shop";
 import Wishlist from "./components/Wishlist";
-import Category from "./components/Category";
+import Category from "./pages/Category";
 import MyAccount from "./pages/MyAccount";
 import MyAddress from "./components/MyAddress";
 import MyOrder from "./components/MyOrder";

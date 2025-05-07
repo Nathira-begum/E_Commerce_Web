@@ -33,7 +33,7 @@ const SeasonalOffers = () => {
       <div>
         <div className="absolute inset-0 bg-black bg-opacity-60"></div>
   
-        <div className="relative z-10 mx-auto bg-black">
+        <div className="relative z-10 mx-auto  bg-black">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -51,7 +51,7 @@ const SeasonalOffers = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="w-100 text-gray-800 p-8 md:p-12 rounded-2xl shadow-md relative text-white py-20 px-6 md:px-20 bg-cover bg-center rounded-3xl shadow-xl overflow-hidden"
+            className="w-100 text-gray-800 p-8 md:p-10 my-6 shadow-md relative text-white py-20 px-6 md:px-20 bg-cover bg-center shadow-xl overflow-hidden"
         style={{ backgroundImage: `url(${offerImage})` }}
           >
             <span className="bg-red-600 text-white text-xs px-3 py-1 rounded-full font-semibold">SUMMER SPECIAL</span>

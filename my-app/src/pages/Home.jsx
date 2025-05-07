@@ -11,7 +11,7 @@ import Footer from '../components/HomeComponents/Footer'
 
 const Home = () => {
   return (
-    <div>
+    <div className='bg-black'>
       <Navbar/>
       <HeroSection/>
       <WebFlashSale/>

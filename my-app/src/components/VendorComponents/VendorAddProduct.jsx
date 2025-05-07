@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const VendorAddProduct = () => {
   const [formData, setFormData] = useState({
+    category: '',
     name: '',
     price: '',
     discount: '',
@@ -15,15 +16,32 @@ const VendorAddProduct = () => {
     vendorEmail: '',
   });
 
-  const [sizeOptions] = useState(['S', 'M', 'L', 'XL', 'XXL',28,30,32,34,36,38]);  // Example sizes
+  const [sizeOptions] = useState(['S', 'M', 'L', 'XL', 'XXL', 28, 30, 32, 34, 36, 38]);
   const [tagsInput, setTagsInput] = useState('');
-  const [discount, setDiscount] = useState(0);
+
+  const categoryOptions = [
+    'Shirt',
+    'Pant',
+    'Watch',
+    'Beauty',
+    'Sports & Fitness',
+    'Toys',
+    'Books',
+  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleDiscountChange = (e) => {
+    const value = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      discount: value,
     }));
   };
 
@@ -34,6 +52,7 @@ const VendorAddProduct = () => {
         tags: [...prevData.tags, tagsInput.trim()],
       }));
       setTagsInput('');
+      e.preventDefault();
     }
   };
 
@@ -69,7 +88,7 @@ const VendorAddProduct = () => {
         'http://localhost:5000/api/products/add-product',
         formData
       );
-      console.log(response.data);
+      console.log('Product added successfully:', response.data);
     } catch (error) {
       console.error('Error creating product:', error);
     }
@@ -79,6 +98,24 @@ const VendorAddProduct = () => {
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl">
       <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
+
+        {/* Category */}
+        <div>
+          <label className="block font-medium mb-1">Category</label>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleInputChange}
+            className="w-full border px-4 py-2 rounded-lg"
+          >
+            <option value="">Select Category</option>
+            {categoryOptions.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Product Name */}
         <div>
@@ -109,15 +146,17 @@ const VendorAddProduct = () => {
           <label className="block font-medium mb-1">Discount (%)</label>
           <input
             type="number"
+            name="discount"
+            value={formData.discount}
+            onChange={handleDiscountChange}
+            className="w-full border px-4 py-2 rounded-lg"
             min="0"
             max="100"
-            value={discount}
-            onChange={(e) => setDiscount(e.target.value)}
-            className="w-full border px-4 py-2 rounded-lg"
           />
-          {formData.price && discount > 0 && (
+          {formData.price && formData.discount > 0 && (
             <div className="text-green-600 mt-2">
-              Discounted Price: ₹{(formData.price - (formData.price * discount) / 100).toFixed(2)}
+              Discounted Price: ₹
+              {(formData.price - (formData.price * formData.discount) / 100).toFixed(2)}
             </div>
           )}
         </div>
@@ -135,23 +174,25 @@ const VendorAddProduct = () => {
         </div>
 
         {/* Sizes */}
-        <div>
-          <label className="block font-medium mb-1">Sizes</label>
-          <div className="flex flex-wrap gap-2">
-            {sizeOptions.map((size) => (
-              <button
-                key={size}
-                type="button"
-                onClick={() => toggleSize(size)}
-                className={`px-3 py-1 rounded-lg border ${
-                  formData.sizes.includes(size) ? 'bg-blue-500 text-white' : 'bg-gray-200'
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+        {formData.category !== 'Watch' && (
+          <div>
+            <label className="block font-medium mb-1">Sizes</label>
+            <div className="flex flex-wrap gap-2">
+              {sizeOptions.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => toggleSize(size)}
+                  className={`px-3 py-1 rounded-lg border ${
+                    formData.sizes.includes(size) ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Colors */}
         <div>
@@ -228,11 +269,11 @@ const VendorAddProduct = () => {
           />
         </div>
 
-        {/* Product Name */}
+        {/* Vendor Email */}
         <div>
           <label className="block font-medium mb-1">Vendor Email</label>
           <input
-            type="text"
+            type="email"
             name="vendorEmail"
             onChange={handleInputChange}
             className="w-full border px-4 py-2 rounded-lg"
