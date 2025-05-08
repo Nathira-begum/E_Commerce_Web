@@ -146,6 +146,13 @@ export default function CategoryPage() {
 
   const inWishlist = (prod) => wishlistItems.some((x) => x._id === prod._id);
 
+  const getDiscountedPrice = (price, discount) => {
+    if (!discount) return price;
+    const value = parseFloat(discount);
+    if (isNaN(value)) return price;
+    return Math.round(price - (price * value) / 100);
+  };
+
   return (
     <>
       <Navbar />
@@ -177,7 +184,7 @@ export default function CategoryPage() {
           ))}
         </aside>
 
-        {/* Main */}
+        {/* Main Content */}
         <main className="w-3/4 p-6">
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-grow">
@@ -229,39 +236,56 @@ export default function CategoryPage() {
                 <p>No matching products found.</p>
               ) : (
                 <div className="grid grid-cols-3 gap-6">
-                  {filtered.map((p) => (
-                    <div key={p._id} className="border p-4 rounded">
-                      <img
-                        src={
-                          p.image?.startsWith("http")
-                            ? p.image
-                            : `http://localhost:5000/uploads/${p.image}`
-                        }
-                        alt={p.name}
-                        className="w-full h-40 object-cover mb-2"
-                      />
-                      <h3 className="font-semibold">{p.name}</h3>
-                      <p className="text-gray-500">${p.price}</p>
-                      <div className="flex gap-2 mt-4">
-                        <button
-                          onClick={() => handleAddToCart(p)}
-                          className="bg-blue-500 text-white flex-1 py-2 rounded flex items-center justify-center gap-2"
-                        >
-                          <FaShoppingCart /> Add to Cart
-                        </button>
-                        <button
-                          onClick={() => handleToggleWishlist(p)}
-                          className={`flex-1 py-2 rounded flex items-center justify-center gap-2 ${
-                            inWishlist(p)
-                              ? "bg-pink-500 text-white"
-                              : "bg-red-500 text-white"
-                          }`}
-                        >
-                          <FaHeart /> {inWishlist(p) ? "Remove" : "Wishlist"}
-                        </button>
+                  {filtered.map((p) => {
+                    const discountedPrice = getDiscountedPrice(p.price, p.discount);
+                    return (
+                      <div key={p._id} className="border p-4 rounded">
+                        <img
+                          src={
+                            p.image?.startsWith("http")
+                              ? p.image
+                              : `http://localhost:5000/uploads/${p.image}`
+                          }
+                          alt={p.name}
+                          className="w-full h-40 object-cover mb-2"
+                        />
+                        <h3 className="font-semibold">{p.name}</h3>
+                        <div className="text-gray-500 text-sm">
+                          {p.discount ? (
+                            <>
+                              <span className="line-through mr-2">${p.price}</span>
+                              <span className="text-green-600 font-semibold">
+                                ${discountedPrice}
+                              </span>
+                              <span className="ml-2 text-red-500 text-xs">
+                                ({p.discount} OFF)
+                              </span>
+                            </>
+                          ) : (
+                            <span>${p.price}</span>
+                          )}
+                        </div>
+                        <div className="flex gap-2 mt-4">
+                          <button
+                            onClick={() => handleAddToCart(p)}
+                            className="bg-blue-500 text-white flex-1 py-2 rounded flex items-center justify-center gap-2"
+                          >
+                            <FaShoppingCart /> Add to Cart
+                          </button>
+                          <button
+                            onClick={() => handleToggleWishlist(p)}
+                            className={`flex items-center justify-center py-2 px-3 rounded ${
+                              inWishlist(p)
+                                ? "bg-red-500 text-white"
+                                : "bg-gray-200 text-gray-700"
+                            }`}
+                          >
+                            <FaHeart />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </>

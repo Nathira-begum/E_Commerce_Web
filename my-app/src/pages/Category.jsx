@@ -1,256 +1,298 @@
-import React, { useEffect, useState } from "react";
-import { FaFilter } from "react-icons/fa";
-import { motion } from "framer-motion";
-import Navbar from "../components/HomeComponents/Navbar";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import {
+  FaShoppingCart,
+  FaHeart,
+  FaImage,
+  FaTimesCircle,
+} from "react-icons/fa";
+import Navbar from "../components/HomeComponents/Navbar";
+import Footer from "../components/HomeComponents/Footer";
 
+const FILTERS = {
+  size: ["S", "M", "L", "XL"],
+  brand: ["Nike", "Adidas", "Puma"],
+  color: ["Black", "Red", "Gray"],
+  rating: [5, 4, 3, 2],
+  offer: ["Buy 2 for 999", "10% OFF"],
+  discount: ["10%", "20%", "30%"],
+};
 
-const Category = () => {
+const safeParse = (key) => {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || [];
+  } catch {
+    return [];
+  }
+};
+
+export default function CategoryPage() {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedTag, setSelectedTag] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(0);
+  const [filtered, setFiltered] = useState([]);
+  const [filters, setFilters] = useState(
+    Object.fromEntries(Object.keys(FILTERS).map((k) => [k, []]))
+  );
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState("Popularity");
+  const [loading, setLoading] = useState(false);
 
-  // Fetch all products
-  useEffect(() => {
+  const [cartItems, setCartItems] = useState(safeParse("cartItems"));
+  const [wishlistItems, setWishlistItems] = useState(safeParse("wishlist"));
+
+  const fileRef = useRef();
+
+  const fetchProducts = (q = "") => {
+    setLoading(true);
+    const url = q
+      ? `http://localhost:5000/api/products?q=${encodeURIComponent(q)}`
+      : `http://localhost:5000/api/products`;
+
     axios
-      .get("http://localhost:5000/api/products")
+      .get(url)
       .then((res) => {
         setProducts(res.data);
-        setFilteredProducts(res.data);
-        setLoading(false);
+        setFiltered(res.data);
       })
-      .catch((err) => {
-        console.error("Error fetching products:", err);
-        setLoading(false);
-      });
-  }, []);
-
-  // Filter products
-  useEffect(() => {
-    const filtered = products.filter((product) => {
-      const matchesSize = selectedSize ? product.sizes?.includes(selectedSize) : true;
-      const matchesColor = selectedColor ? product.colors?.includes(selectedColor) : true;
-      const matchesTag = selectedTag ? product.tags?.includes(selectedTag) : true;
-      const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
-      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesPrice =
-        (minPrice || maxPrice) ? (product.price >= minPrice && product.price <= maxPrice) : true;
-
-      return (
-        matchesSize &&
-        matchesColor &&
-        matchesTag &&
-        matchesCategory &&
-        matchesSearch &&
-        matchesPrice
-      );
-    });
-
-    setFilteredProducts(filtered);
-  }, [
-    selectedSize,
-    selectedColor,
-    selectedTag,
-    selectedCategory,
-    minPrice,
-    maxPrice,
-    searchQuery,
-    products,
-  ]);
-
-  // Handle individual filter
-  const handleFilter = (type, value) => {
-    if (type === "size") setSelectedSize(value === selectedSize ? null : value);
-    if (type === "color") setSelectedColor(value === selectedColor ? null : value);
-    if (type === "tag") setSelectedTag(value === selectedTag ? null : value);
-    if (type === "category") setSelectedCategory(value === selectedCategory ? null : value);
+      .catch(console.error)
+      .finally(() => setLoading(false));
   };
 
-  // Clear all filters
-  const clearFilters = () => {
-    setSelectedSize(null);
-    setSelectedColor(null);
-    setSelectedTag(null);
-    setSelectedCategory(null);
-    setMinPrice(0);
-    setMaxPrice(1000);
+  useEffect(() => {
+    fetchProducts(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    let arr = [...products];
+
+    Object.entries(filters).forEach(([k, vals]) => {
+      if (vals.length) {
+        arr = arr.filter((p) => {
+          const val = p[k];
+          if (Array.isArray(val)) {
+            return val.some((v) => vals.includes(String(v)));
+          }
+          return vals.includes(String(val));
+        });
+      }
+    });
+
+    if (sortBy === "Price:Low") arr.sort((a, b) => a.price - b.price);
+    if (sortBy === "Price:High") arr.sort((a, b) => b.price - a.price);
+
+    setFiltered(arr);
+  }, [filters, sortBy, products]);
+
+  const toggleFilter = (k, v) => {
+    setFilters((f) => {
+      const s = new Set(f[k]);
+      s.has(v) ? s.delete(v) : s.add(v);
+      return { ...f, [k]: [...s] };
+    });
+  };
+
+  const clearFilters = () =>
+    setFilters(Object.fromEntries(Object.keys(FILTERS).map((k) => [k, []])));
+
+  const clearSearch = () => {
     setSearchQuery("");
+    fetchProducts("");
+  };
+
+  const onFile = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fd = new FormData();
+    fd.append("image", file);
+
+    axios
+      .post("http://localhost:5000/api/products/image-search", fd)
+      .then((res) => {
+        const matchedProducts = res.data.products;
+        if (!matchedProducts.length) {
+          alert("No matching products found");
+        }
+        setProducts(matchedProducts);
+        setFiltered(matchedProducts);
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Error during image search");
+      });
+  };
+
+  const handleAddToCart = (prod) => {
+    if (cartItems.some((x) => x._id === prod._id)) {
+      alert("Already in cart");
+      return;
+    }
+    const updated = [...cartItems, { ...prod, quantity: 1 }];
+    setCartItems(updated);
+    localStorage.setItem("cartItems", JSON.stringify(updated));
+    window.dispatchEvent(new Event("cart_update"));
+  };
+
+  const handleToggleWishlist = (prod) => {
+    let updated;
+    if (wishlistItems.some((x) => x._id === prod._id)) {
+      updated = wishlistItems.filter((x) => x._id !== prod._id);
+    } else {
+      updated = [...wishlistItems, prod];
+    }
+    setWishlistItems(updated);
+    localStorage.setItem("wishlist", JSON.stringify(updated));
+    window.dispatchEvent(new Event("wishlist_update"));
+  };
+
+  const inWishlist = (prod) => wishlistItems.some((x) => x._id === prod._id);
+
+  const getDiscountedPrice = (price, discount) => {
+    if (!discount) return price;
+    const value = parseFloat(discount);
+    if (isNaN(value)) return price;
+    return Math.round(price - (price * value) / 100);
   };
 
   return (
-
     <>
-    <Navbar/>
-    <div className="flex flex-col lg:flex-row px-4 py-16 gap-4 bg-gray-100 min-h-screen">
+      <Navbar />
+      <div className="flex mt-16">
+        {/* Sidebar */}
+        <aside className="w-1/4 p-6 border-r space-y-4">
+          <button
+            onClick={clearFilters}
+            className="flex items-center gap-2 text-red-500"
+          >
+            <FaTimesCircle /> Clear Filters
+          </button>
+          {Object.entries(FILTERS).map(([k, opts]) => (
+            <div key={k}>
+              <h4 className="font-bold capitalize">{k}</h4>
+              {opts.map((o) => (
+                <label key={o} className="block text-sm">
+                  <input
+                    type="checkbox"
+                    checked={filters[k].includes(o)}
+                    onChange={() => toggleFilter(k, o)}
+                  />
+                  <span className="ml-2">
+                    {k === "rating" ? `${o}★ & up` : o}
+                  </span>
+                </label>
+              ))}
+            </div>
+          ))}
+        </aside>
 
-      {/* Filter Sidebar */}
-      <div className="w-full lg:w-1/4 bg-white rounded-xl p-6 shadow">
-        <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
-          <FaFilter className="text-red-600" /> Filters
-        </h2>
-
-        {/* Sizes */}
-        <div className="mb-4">
-          <h3 className="font-medium mb-2">Sizes</h3>
-          <div className="flex flex-wrap gap-2">
-            {["S", "M", "L", "XL", "XXL"].map((size) => (
-              <span
-                key={size}
-                onClick={() => handleFilter("size", size)}
-                className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
-                  selectedSize === size ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-red-100"
-                }`}
+        {/* Main Content */}
+        <main className="w-3/4 p-6">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="relative flex-grow">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search…"
+                className="w-full border rounded pl-4 pr-10 py-2"
+              />
+              <button
+                onClick={() => fileRef.current.click()}
+                className="absolute right-8 top-1/2 -translate-y-1/2 text-gray-600"
               >
-                {size}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Colors */}
-        <div className="mb-4">
-          <h3 className="font-medium mb-2">Colors</h3>
-          <div className="flex flex-wrap gap-2">
-            {["red", "blue", "white", "black", "green"].map((color) => (
-              <span
-                key={color}
-                onClick={() => handleFilter("color", color)}
-                className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
-                  selectedColor === color ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-red-100"
-                }`}
+                <FaImage />
+              </button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                onChange={onFile}
+                className="hidden"
+              />
+              <button
+                onClick={clearSearch}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600"
+                title="Clear search"
               >
-                {color}
-              </span>
-            ))}
+                <FaTimesCircle />
+              </button>
+            </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="border rounded px-3 py-2"
+            >
+              <option>Popularity</option>
+              <option value="Price:Low">Price:Low</option>
+              <option value="Price:High">Price:High</option>
+            </select>
           </div>
-        </div>
 
-        {/* Tags */}
-        <div className="mb-4">
-          <h3 className="font-medium mb-2">Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {["casual", "formal", "trendy", "classic"].map((tag) => (
-              <span
-                key={tag}
-                onClick={() => handleFilter("tag", tag)}
-                className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
-                  selectedTag === tag ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-red-100"
-                }`}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Categories */}
-        <div className="mb-4">
-          <h3 className="font-medium mb-2">Category</h3>
-          <div className="flex flex-wrap gap-2">
-            {["Shirt", "Pant", "Watch"].map((category) => (
-              <span
-                key={category}
-                onClick={() => handleFilter("category", category)}
-                className={`px-3 py-1 rounded-full text-sm cursor-pointer ${
-                  selectedCategory === category ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-red-100"
-                }`}
-              >
-                {category}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Price Filter */}
-        <div className="mb-4">
-          <h3 className="font-medium mb-2">Price</h3>
-          <div className="flex items-center gap-2">
-            <input
-              type="range"
-              min="0"
-              max="10000"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(parseInt(e.target.value))}
-              className="w-full"
-            />
-            <span className="text-sm">Up to ${maxPrice}</span>
-          </div>
-          <div className="flex items-center gap-2 mt-2">
-            <input
-              type="number"
-              value={minPrice}
-              onChange={(e) => setMinPrice(parseInt(e.target.value))}
-              className="w-full p-2 border rounded"
-              placeholder="Min Price"
-            />
-            <span>-</span>
-            <input
-              type="number"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(parseInt(e.target.value))}
-              className="w-full p-2 border rounded"
-              placeholder="Max Price"
-            />
-          </div>
-        </div>
-
-        {/* Clear Filters */}
-        <button
-          onClick={clearFilters}
-          className="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-black py-2 rounded-lg font-medium"
-        >
-          Clear Filters
-        </button>
+          {loading ? (
+            <p>Loading…</p>
+          ) : (
+            <>
+              <h2 className="text-2xl mb-4">{filtered.length} Results</h2>
+              {filtered.length === 0 ? (
+                <p>No matching products found.</p>
+              ) : (
+                <div className="grid grid-cols-3 gap-6">
+                  {filtered.map((p) => {
+                    const discountedPrice = getDiscountedPrice(p.price, p.discount);
+                    return (
+                      <div key={p._id} className="border p-4 rounded">
+                        <img
+                          src={
+                            p.image?.startsWith("http")
+                              ? p.image
+                              : `http://localhost:5000/uploads/${p.image}`
+                          }
+                          alt={p.name}
+                          className="w-full h-40 object-cover mb-2"
+                        />
+                        <h3 className="font-semibold">{p.name}</h3>
+                        <div className="text-gray-500 text-sm">
+                          {p.discount ? (
+                            <>
+                              <span className="line-through mr-2">${p.price}</span>
+                              <span className="text-green-600 font-semibold">
+                                ${discountedPrice}
+                              </span>
+                              <span className="ml-2 text-red-500 text-xs">
+                                ({p.discount} OFF)
+                              </span>
+                            </>
+                          ) : (
+                            <span>${p.price}</span>
+                          )}
+                        </div>
+                        <div className="flex gap-2 mt-4">
+                          <button
+                            onClick={() => handleAddToCart(p)}
+                            className="bg-blue-500 text-white flex-1 py-2 rounded flex items-center justify-center gap-2"
+                          >
+                            <FaShoppingCart /> Add to Cart
+                          </button>
+                          <button
+                            onClick={() => handleToggleWishlist(p)}
+                            className={`flex items-center justify-center py-2 px-3 rounded ${
+                              inWishlist(p)
+                                ? "bg-red-500 text-white"
+                                : "bg-gray-200 text-gray-700"
+                            }`}
+                          >
+                            <FaHeart />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+        </main>
       </div>
-
-      {/* Products Grid */}
-      <div className="w-full lg:w-3/4">
-        <h2 className="text-2xl font-bold mb-4">Products</h2>
-        {loading ? (
-          <div className="text-center text-gray-500">Loading products...</div>
-        ) : filteredProducts.length === 0 ? (
-          <p className="text-gray-500">No products match the selected filters.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <motion.div
-                key={product._id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="bg-white p-4 rounded-xl shadow hover:shadow-lg transform hover:-translate-y-1 transition-all"
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-64 object-cover rounded-lg mb-4"
-                  loading="lazy"
-                />
-                <h3 className="text-lg font-semibold">{product.name}</h3>
-                <p className="text-gray-500 mt-2">${product.price}</p>
-                <button className="mt-4 bg-red-600 text-white py-2 px-4 rounded-full">
-                  Add to Cart
-                </button>
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-
-    
-
+      <Footer />
     </>
-
-   
   );
-};
-
-export default Category;
+}
