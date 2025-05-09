@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import Navbar from "../components/HomeComponents/Navbar";
 import Footer from "../components/HomeComponents/Footer";
+import { useNavigate } from "react-router-dom";
 
 const FILTERS = {
   size: ["S", "M", "L", "XL"],
@@ -39,7 +40,13 @@ export default function CategoryPage() {
   const [cartItems, setCartItems] = useState(safeParse("cartItems"));
   const [wishlistItems, setWishlistItems] = useState(safeParse("wishlist"));
 
+  const [selectedSize, setSelectedSize] = useState("");
+  const [showSizeModal, setShowSizeModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const navigate = useNavigate();
+
   const fileRef = useRef();
+
 
   const fetchProducts = (q = "") => {
     setLoading(true);
@@ -153,6 +160,24 @@ export default function CategoryPage() {
     return Math.round(price - (price * value) / 100);
   };
 
+  const handleBuyNow = (product) => {
+    setSelectedProduct(product);
+    setShowSizeModal(true);
+  };
+
+  const confirmOrder = () => {
+    if (!selectedSize) {
+      alert("Please select a size");
+      return;
+    }
+    const orderDetails = {
+      ...selectedProduct,
+      selectedSize,
+    };
+    localStorage.setItem("orderDetails", JSON.stringify(orderDetails));
+    navigate("/review-order");
+  };
+
   return (
     <>
       <Navbar />
@@ -237,7 +262,10 @@ export default function CategoryPage() {
               ) : (
                 <div className="grid grid-cols-3 gap-6">
                   {filtered.map((p) => {
-                    const discountedPrice = getDiscountedPrice(p.price, p.discount);
+                    const discountedPrice = getDiscountedPrice(
+                      p.price,
+                      p.discount
+                    );
                     return (
                       <div key={p._id} className="border p-4 rounded">
                         <img
@@ -253,7 +281,9 @@ export default function CategoryPage() {
                         <div className="text-gray-500 text-sm">
                           {p.discount ? (
                             <>
-                              <span className="line-through mr-2">${p.price}</span>
+                              <span className="line-through mr-2">
+                                ${p.price}
+                              </span>
                               <span className="text-green-600 font-semibold">
                                 ${discountedPrice}
                               </span>
@@ -268,13 +298,20 @@ export default function CategoryPage() {
                         <div className="flex gap-2 mt-4">
                           <button
                             onClick={() => handleAddToCart(p)}
-                            className="bg-blue-500 text-white flex-1 py-2 rounded flex items-center justify-center gap-2"
+                            className="bg-blue-500 text-white w-full  mt-4 rounded gap-2"
                           >
                             <FaShoppingCart /> Add to Cart
                           </button>
+
+                          <button
+                            onClick={() => handleBuyNow(p)}
+                            className="bg-green-500 text-white w-full  mt-4 rounded"
+                          >
+                            Buy Now
+                          </button>
                           <button
                             onClick={() => handleToggleWishlist(p)}
-                            className={`flex items-center justify-center py-2 px-3 rounded ${
+                            className={`flex items-center justify-center  w-full mt-4 rounded ${
                               inWishlist(p)
                                 ? "bg-red-500 text-white"
                                 : "bg-gray-200 text-gray-700"
@@ -283,6 +320,43 @@ export default function CategoryPage() {
                             <FaHeart />
                           </button>
                         </div>
+                        {showSizeModal && (
+                          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                            <div className="bg-white p-6 rounded w-80">
+                              <h2 className="text-xl font-bold mb-4">
+                                Select Size
+                              </h2>
+                              <select
+                                className="w-full border p-2 rounded mb-4"
+                                value={selectedSize}
+                                onChange={(e) =>
+                                  setSelectedSize(e.target.value)
+                                }
+                              >
+                                <option value="">Select Size</option>
+                                {["XXS", "XS", "S", "M", "L", "XL", "XXL"].map(
+                                  (size) => (
+                                    <option key={size} value={size}>
+                                      {size}
+                                    </option>
+                                  )
+                                )}
+                              </select>
+                              <button
+                                onClick={confirmOrder}
+                                className="bg-green-500 text-white w-full py-2 rounded"
+                              >
+                                Confirm Order
+                              </button>
+                              <button
+                                onClick={() => setShowSizeModal(false)}
+                                className="bg-gray-500 text-white w-full py-2 rounded mt-2"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

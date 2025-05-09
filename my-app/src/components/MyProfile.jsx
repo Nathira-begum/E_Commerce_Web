@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-
 import {
   FaThLarge,
   FaBox,
@@ -22,52 +21,37 @@ const MyProfile = () => {
     phone: "",
   });
 
-  const [profile, setProfile] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-  });
   const [dob, setDob] = useState(null);
   const [gender, setGender] = useState("");
   const [isEditable, setIsEditable] = useState(false);
 
+  // Load user/profile data from localStorage/sessionStorage
   useEffect(() => {
-    const userDataString =
-      localStorage.getItem("user") || sessionStorage.getItem("user");
-    const profileDataString =
-      localStorage.getItem("profile") || sessionStorage.getItem("profile");
+    const storedUser =
+      JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user")) || {};
+    const storedProfile =
+      JSON.parse(localStorage.getItem("profile") || sessionStorage.getItem("profile")) || {};
 
-    try {
-      if (userDataString && userDataString !== "undefined") {
-        const storedUser = JSON.parse(userDataString);
+    const mergedData = {
+      firstName: storedUser.firstName || storedProfile.firstName || "",
+      lastName: storedUser.lastName || storedProfile.lastName || "",
+      email: storedUser.email || storedProfile.email || "",
+      phone: storedUser.phone || storedProfile.phone || "",
+      dob: storedUser.dob || storedProfile.dob || null,
+      gender: storedUser.gender || storedProfile.gender || "",
+      _id: storedUser._id || null,
+    };
 
-        setUser({
-          firstName: storedUser.firstName || "",
-          lastName: storedUser.lastName || "",
-          email: storedUser.email || "",
-          phone: storedUser.phone || "",
-        });
+    setUser({
+      firstName: mergedData.firstName,
+      lastName: mergedData.lastName,
+      email: mergedData.email,
+      phone: mergedData.phone,
+      _id: mergedData._id,
+    });
 
-        setDob(storedUser.dob ? new Date(storedUser.dob) : null);
-        setGender(storedUser.gender || "");
-      }
-
-      if (profileDataString && profileDataString !== "undefined") {
-        const storedProfile = JSON.parse(profileDataString);
-
-        setProfile({
-          firstName: storedProfile.firstName || "",
-          lastName: storedProfile.lastName || "",
-          email: storedProfile.email || "",
-        });
-
-        // Also update individual state
-        setDob(storedProfile.dob ? new Date(storedProfile.dob) : null);
-        setGender(storedProfile.gender || "");
-      }
-    } catch (error) {
-      console.error("Invalid user data in storage:", error);
-    }
+    setDob(mergedData.dob ? new Date(mergedData.dob) : null);
+    setGender(mergedData.gender || "");
   }, []);
 
   const handleChange = (e) => {
@@ -82,95 +66,52 @@ const MyProfile = () => {
       const updatedUser = {
         ...user,
         dob: dob ? dob.toISOString() : null,
-        gender: gender, // <-- add this explicitly
-      };
-
-      const updatedProfile = {
-        ...profile,
-        dob,
         gender,
       };
 
-      localStorage.setItem("profile", JSON.stringify(updatedProfile));
-      setProfile(updatedProfile);
+      const storedUserString = localStorage.getItem("user") || sessionStorage.getItem("user");
 
-      console.log(updatedUser, "updateduser<<<<<<<<");
-      const storedUserString = localStorage.getItem("user");
-
-      // If no user is found in localStorage, show an error and exit
       if (!storedUserString) {
-        throw new Error("User data not found in localStorage");
+        alert("User not logged in.");
+        return;
       }
 
       const storedUser = JSON.parse(storedUserString);
 
-      // Check if userId exists in the storedUser
       if (!storedUser._id) {
-        throw new Error("User ID not found in user data.");
+        alert("User ID not found. Are you logged in via Google?");
+        return;
       }
 
-      // Get the userId from the stored user data
       const userId = storedUser._id;
-      console.log(userId, "userid<<<<<<<<");
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/update-profile",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              userId,
-              firstName: updatedUser.firstName,
-              lastName: updatedUser.lastName,
-              email: updatedUser.email,
-              phone: updatedUser.phone,
-              gender: updatedUser.gender,
-              dob: updatedUser.dob,
-            }),
-          }
-        );
 
-        let result = {};
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          result = await response.json();
-        } else {
-          const text = await response.text();
-          console.warn("⚠️ Not JSON response:", text);
-          throw new Error("Server returned non-JSON response");
-        }
+      const response = await fetch("http://localhost:5000/api/update-profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...updatedUser, userId }),
+      });
 
-        if (!response.ok) {
-          if (result && result.message === "User not found") {
-            localStorage.removeItem("user");
-            alert("User not found. Please login again.");
-          } else {
-            alert(result?.message || "Something went wrong.");
-          }
-          return;
-        }
+      const contentType = response.headers.get("content-type");
+      const result = contentType && contentType.includes("application/json")
+        ? await response.json()
+        : { message: await response.text() };
 
-        // ✅ If everything went well
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            _id: storedUser._id,
-            firstName: updatedUser.firstName,
-            lastName: updatedUser.lastName,
-            phone: updatedUser.phone,
-            gender: updatedUser.gender,
-            dob: updatedUser.dob,
-            email: updatedUser.email,
-          })
-        );
-
-        alert("Profile updated successfully!");
-      } catch (error) {
-        console.error("❌ Error updating profile:", error);
-        alert("Error updating profile<<<<<<<<<<<<<<");
+      if (!response.ok) {
+        alert(result?.message || "Something went wrong.");
+        return;
       }
+
+      // Save to localStorage
+      const updatedStorageUser = {
+        ...storedUser,
+        ...updatedUser,
+      };
+      localStorage.setItem("user", JSON.stringify(updatedStorageUser));
+      localStorage.setItem("profile", JSON.stringify(updatedStorageUser));
+
+      alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Error updating profile");
@@ -179,104 +120,35 @@ const MyProfile = () => {
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
-      {/* Navbar */}
       <Navbar />
-
-      {/* Main Section */}
       <div className="flex px-10 py-8 gap-6 mt-12">
         {/* Sidebar */}
         <div className="w-1/4 bg-white shadow-md rounded-lg p-6">
           <ul className="space-y-3 font-medium text-gray-700">
-            <li>
-              <NavLink
-                to="/myaccount"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 py-2 border-b ${
-                    isActive
-                      ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-red-500"
-                  }`
-                }
-              >
-                <FaThLarge className="text-lg" />
-                Overview
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/myorders"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
-                    isActive
-                      ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-red-500"
-                  }`
-                }
-              >
-                <FaBox className="text-lg" />
-                My Orders
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/mypayment"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
-                    isActive
-                      ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-red-500"
-                  }`
-                }
-              >
-                <FaMoneyCheckAlt className="text-lg" />
-                My Payments
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/mywallet"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
-                    isActive
-                      ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-red-500"
-                  }`
-                }
-              >
-                <FaWallet className="text-lg" />
-                My Wallet
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/myaddress"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
-                    isActive
-                      ? "text-black border-black"
-                      : "text-gray-700 border-gray-200 hover:text-red-500"
-                  }`
-                }
-              >
-                <FaMapMarkerAlt className="text-lg" />
-                My Addresses
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/myprofile"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 py-2 border-b transition-colors duration-200 hover:text-red-500 ${
-                    isActive
-                      ? "text-black border-black"
-                      : "text-gray-700 border-gray-200"
-                  }`
-                }
-              >
-                <FaUser className="text-lg" />
-                My Profile
-              </NavLink>
-            </li>
+            {[
+              { to: "/myaccount", icon: <FaThLarge />, label: "Overview" },
+              { to: "/myorders", icon: <FaBox />, label: "My Orders" },
+              { to: "/mypayment", icon: <FaMoneyCheckAlt />, label: "My Payments" },
+              { to: "/mywallet", icon: <FaWallet />, label: "My Wallet" },
+              { to: "/myaddress", icon: <FaMapMarkerAlt />, label: "My Addresses" },
+              { to: "/myprofile", icon: <FaUser />, label: "My Profile" },
+            ].map(({ to, icon, label }) => (
+              <li key={to}>
+                <NavLink
+                  to={to}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 py-2 border-b transition-colors duration-200 ${
+                      isActive
+                        ? "text-black border-black"
+                        : "text-gray-700 border-gray-200 hover:text-red-500"
+                    }`
+                  }
+                >
+                  {icon}
+                  {label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -284,23 +156,21 @@ const MyProfile = () => {
         <div className="w-full md:w-3/4 bg-white shadow rounded-md p-6 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <label className="text-sm font-medium">First Name </label>
+              <label className="text-sm font-medium">First Name</label>
               <input
                 type="text"
                 name="firstName"
                 value={user.firstName}
-                // readOnly
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
               />
             </div>
             <div className="flex-1">
-              <label className="text-sm font-medium">Last Name </label>
+              <label className="text-sm font-medium">Last Name</label>
               <input
                 type="text"
                 name="lastName"
-                value={user.lastName || ""}
-                // readOnly
+                value={user.lastName}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
               />
@@ -308,7 +178,7 @@ const MyProfile = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Email Id </label>
+            <label className="text-sm font-medium">Email</label>
             <input
               type="email"
               name="email"
@@ -320,7 +190,7 @@ const MyProfile = () => {
 
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <label className="text-sm font-medium">Phone Number </label>
+              <label className="text-sm font-medium">Phone</label>
               <div className="flex items-center border border-gray-300 rounded">
                 <input
                   type="text"
@@ -340,6 +210,7 @@ const MyProfile = () => {
                 </button>
               </div>
             </div>
+
             <div className="flex-1 flex flex-col">
               <label className="text-sm font-medium mb-1">DOB</label>
               <DatePicker
@@ -359,8 +230,7 @@ const MyProfile = () => {
           </div>
 
           <p className="text-sm text-gray-600 mt-2">
-            Share your DOB to get special gifts on the 1st day of your birthday
-            month
+            Share your DOB to get special gifts on the 1st day of your birthday month
           </p>
 
           <div className="mt-4">
@@ -392,8 +262,6 @@ const MyProfile = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
       <Footer />
     </div>
   );

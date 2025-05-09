@@ -21,7 +21,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PendingVendors from "./pages/PendingVendors";
 import PendingProducts from "./pages/PendingProducts";
 // import SearchResult from "./components/HomeComponents/SearchResults";
-
+import ReviewOrderPage from "./pages/ReviewOrderPage";
 
 function App() {
   return (
@@ -38,8 +38,6 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         {/* <Route path="/search" element={<SearchResult />} /> */}
 
-        
-
         <Route path="/vendor/login" element={<VendorLogin />} />
         <Route path="/vendor/register" element={<VendorRegister />} />
         <Route path="/vendor" element={<Vendor />} />
@@ -47,17 +45,14 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/vendors" element={<PendingVendors />} />
         <Route path="/admin/products" element={<PendingProducts />} />
-
-
-
+        <Route path="/review-order" element={<ReviewOrderPage />} />
 
         {/* NESTED ROUTES */}
-        <Route path="myprofile" element={<MyProfile />}>
-          <Route path="myaddress" element={<MyAddress />} />
-          <Route path="myorder" element={<MyOrder />} />
-          <Route path="mypayment" element={<MyPayment />} />
-          <Route path="mywallet" element={<MyWallet />} />
-        </Route>
+        <Route path="/myprofile" element={<MyProfile />} />
+        <Route path="/myaddress" element={<MyAddress />} />
+        <Route path="/myorder" element={<MyOrder />} />
+        <Route path="/mypayment" element={<MyPayment />} />
+        <Route path="/mywallet" element={<MyWallet />} />
       </Routes>
     </Router>
   );
